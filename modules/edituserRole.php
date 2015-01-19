@@ -108,9 +108,9 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                 <textarea name="description" id="description" rows="7" cols="90" class="input-short"><?php echo isset($detail['role_description']) ? $detail['role_description'] : ''; ?></textarea>
                             </p>
                             <fieldset>
+                                <input class="submit-gray" type="button" value="Back" onclick="gotopage('userRole');" />
                                 <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
                                 <input type="hidden" name="role_id" id="role_id" value="<?php echo isset($detail['id']) ? $detail['id'] : ''; ?>" />
-                                <input class="submit-gray" type="reset" value="Cancel" />
                             </fieldset>
                             <?php
                         }

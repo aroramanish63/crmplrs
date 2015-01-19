@@ -93,21 +93,32 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                         <label>Group Description <span class="red">*</span></label>
                         <textarea name="description" id="description" rows="7" cols="90" class="input-short"><?php echo (isset($_REQUEST['description'])) ? $_REQUEST['description'] : ''; ?></textarea>
                     </p>
-<!--                    <p>
-                        <label>Clearance Status <span class="red">*</span></label>
+                    <p>
+                        <label>Complaint Transferred <span class="red">*</span></label>
                     <table border="1">
-                        <tr><th>Clearance Status</th><th>Apply</th></tr>
-                    <?php
-//                    $billFunc = $userFunc->load_class_object('billFunctions');
-//                    $clearance = $billFunc->getClearanceStatus();
-//                    if (is_array($clearance) && count($clearance) > 0) {
-//                        foreach ($clearance as $bill) {
-//                            echo '<tr><td>' . $bill['clearance_type'] . '</td><td><input type="checkbox" id="clearance_status" name="clearance_status[]" value="' . $bill['id'] . '" /></td></tr>';
-//                        }
-//                    }
-                    ?>
+                        <tr><th>Complaint Transferred To</th><th>Apply</th></tr>
+                        <?php
+                        $group_arr = array();
+                        $checked = '';
+                        $group_arr = isset($detail['transferred_to']) ? explode(',', $detail['transferred_to']) : '';
+                        $ugroups = $userFunc->getUserGroup();
+                        if (is_array($ugroups) && count($ugroups) > 0) {
+                            echo '<tr><td>None</td><td><input type="checkbox" onclick="disabledTransfer();" id="transferred_none" name="transferred_to[]" value="0" /></td></tr>';
+                            foreach ($ugroups as $group) {
+                                if (is_array($group_arr) && count($group_arr) > 0) {
+                                    if (in_array($group['id'], $group_arr)) {
+                                        $checked = 'checked="checked"';
+                                    }
+                                    else {
+                                        $checked = '';
+                                    }
+                                }
+                                echo '<tr><td>' . $group['group_name'] . '</td><td><input type="checkbox" id="transferred_' . str_replace(array(' ', '-'), '_', $group['group_name']) . '" name="transferred_to[]" value="' . $group['id'] . '" ' . $checked . ' /></td></tr>';
+                            }
+                        }
+                        ?>
                     </table>
-                    </p>-->
+                    </p>
                     <p>
                         <label>Assign Roles <span class="red">*</span></label>
                     <table border="1">
@@ -123,8 +134,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                     </table>
                     </p>
                     <fieldset>
+                        <input class="submit-gray" type="button" value="Back" onclick="gotopage('userGroup');" />
                         <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
-                        <input class="submit-gray" type="reset" value="Cancel" />
                     </fieldset>
                 </form>
             </div> <!-- End .module-body -->

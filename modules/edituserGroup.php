@@ -162,9 +162,9 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                             </table>
                             </p>
                             <fieldset>
+                                <input class="submit-gray" type="button" value="Back" onclick="gotopage('userGroup');" />
                                 <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
                                 <input type="hidden" name="group_id" id="group_id" value="<?php echo isset($detail['id']) ? $detail['id'] : ''; ?>" />
-                                <input class="submit-gray" type="reset" value="Cancel" />
                             </fieldset>
                             <?php
                         }

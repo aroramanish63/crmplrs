@@ -158,11 +158,11 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                             <textarea name="address" id="address" rows="7" cols="90" class="input-short"><?php echo $detail['address']; ?></textarea>
                         </p>
                         <fieldset>
+                            <input class="submit-gray" type="button" value="Back" onclick="gotopage('userManagement');" />
                             <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
                             <input type="hidden" name="user_id" id="user_id" value="<?php echo $detail['id'] ?>" />
-                            <input class="submit-gray" type="reset" value="Cancel" />
                         </fieldset>
-                    <?php
+                        <?php
                     }
                 }
                 ?>

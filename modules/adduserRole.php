@@ -98,8 +98,8 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                         <textarea name="description" id="description" rows="7" cols="90" class="input-short"></textarea>
                     </p>
                     <fieldset>
+                        <input class="submit-gray" type="button" value="Back" onclick="gotopage('userRole');" />
                         <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
-                        <input class="submit-gray" type="reset" value="Cancel" />
                     </fieldset>
                 </form>
             </div> <!-- End .module-body -->

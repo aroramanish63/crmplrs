@@ -18,14 +18,6 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
     $details = $complaintFunc->getPLRSComplaint($id);
 }
 ?>
-<script type="text/javascript">
-    /**
-     * function for go to back page
-     */
-    function back() {
-        window.location = '<?php echo SITE_URL ?>?page=viewComplaints';
-    }
-</script>
 <style type="text/css">
     .leftsection{
         width: 40%;
@@ -249,7 +241,7 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                         <?php }
                         ?>
                         <fieldset>
-                            <input class="submit-gray" type="button" value="Back" onclick="back();" />
+                            <input class="submit-gray" type="button" value="Back" onclick="gotopage('viewComplaints');" />
                             <?php
                             if (!$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
                                 if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {

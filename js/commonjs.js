@@ -318,4 +318,12 @@ function validatecomplaintfrm() {
 }
 
 
+/**
+ * function for go to back page
+ */
+function gotopage(page_name) {
+    window.location = document.getElementById('URL_SITE').getAttribute('title') + '?page=' + page_name;
+}
+
+
 
