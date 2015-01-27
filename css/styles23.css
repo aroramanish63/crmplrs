@@ -545,41 +545,12 @@ input.submit-green {
     margin: 0px 10px 0 0;
     cursor: pointer;
 }
-.submit-green {
-    background: url(../images/submit-green-bg.gif) top left repeat-x;
-    border: 0;
-    border-top: 1px solid #6bd091;
-    border-left: 1px solid #6bd091;
-    border-right: 1px solid #349c5c;
-    border-bottom: 1px solid #349c5c;
-    color: #ffffff;
-    font-size: 14px;
-    padding: 2px 12px;
-    margin: 0px 10px 0 0;
-    cursor: pointer;
-}
-.submit-green-hover {
-    background-image: url(../images/submit-green-bg-hover.gif);
-}
 
 input.submit-green-hover {
     background-image: url(../images/submit-green-bg-hover.gif);
 }
 
 input.submit-gray {
-    background: url(../images/submit-gray-bg.gif) top left repeat-x;
-    border: 0;
-    border-top: 1px solid #cccccc;
-    border-left: 1px solid #cccccc;
-    border-right: 1px solid #888888;
-    border-bottom: 1px solid #888888;
-    color: #ffffff;
-    font-size: 14px;
-    padding: 2px 12px;
-    margin: 0px 10px 0 0;
-    cursor: pointer;
-}
-.submit-gray {
     background: url(../images/submit-gray-bg.gif) top left repeat-x;
     border: 0;
     border-top: 1px solid #cccccc;
@@ -828,21 +799,23 @@ ul#drop-nav li {display: block;position: relative;float: left;  background: url(
 
 ul#drop-nav li a {
     background: url("../images/tab-right.png") no-repeat scroll right top transparent;
-    color: #fff;
-	text-shadow: 1px 0 1px #333;   
+    color: #ffffff;
     display: block;
     float: left;
     padding: 7px 15px 6px 6px;
+	text-shadow: 1px 0 1px #333;
+
+
 	
 	
 	}
 li ul {display: none; margin-top:33px; margin-left:-16px;  }
 ul#drop-nav li ul li { background: none; }
 ul#drop-nav li ul li a {display: block; background: #FFF ; padding: 5px 10px 5px 10px;text-decoration: none;
-                        white-space: nowrap;color: #333; width: 200px; border-bottom:1px solid #CCC; border-left:1px solid #CCC ; border-right:1px solid #CCC ;  }
+                        white-space: nowrap;color: #333; text-shadow:none !important; width: 200px; border-bottom:1px solid #CCC; border-left:1px solid #CCC ; border-right:1px solid #CCC ;  }
 ul#drop-nav li ul li a:hover{
-    background:#92c836;
-	color:#FFF;
+    background:#f0f0f0;
+	color:#000;
 }
 ul li a:visited{
     color:#FFFFFF;

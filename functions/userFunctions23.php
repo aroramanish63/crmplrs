@@ -46,7 +46,7 @@ class userFunctions extends commonFxn {
         if (!isset($poarray['btnsearch'])) {
             return false;
         }
-		
+
         if (isset($poarray['u_group']) && $poarray['u_group'] !== '') {
             $condition .= " and user_group='" . $this->real_escape_string($poarray['u_group']) . "'";
         }
@@ -54,13 +54,6 @@ class userFunctions extends commonFxn {
         if (isset($poarray['status']) && $poarray['status'] !== '') {
             $condition .= " and status='" . $this->real_escape_string($poarray['status']) . "'";
         }
-		if (isset($poarray['email']) && $poarray['email'] !== '') {
-            $condition .= " and email='" . $this->real_escape_string($poarray['email']) . "'";
-        }
-		if (isset($poarray['mobile']) && $poarray['mobile'] !== '') {
-            $condition .= " and mobile_no='" . $this->real_escape_string($poarray['mobile']) . "'";
-        }
-
 
         $selectData = mysql_query("select * from $this->userTable $condition $order") or die(mysql_error());
         if ($this->countTablerows($selectData) > 0) {

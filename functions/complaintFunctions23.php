@@ -49,10 +49,6 @@ class complaintFunctions extends commonFxn {
             $condition .= " and status='" . $this->real_escape_string($_POST['status']) . "'";
         }
 
-        if (isset($_POST['email']) && $_POST['email'] !== '') {
-            $condition .= " and email='" . $this->real_escape_string($_POST['email']) . "'";
-        }
-
         $selectData = mysql_query("select * from $this->plrs_complaint $condition $order") or die(mysql_error());
         if ($this->countTablerows($selectData) > 0) {
             while ($rows = mysql_fetch_assoc($selectData)) {
@@ -143,7 +139,7 @@ class complaintFunctions extends commonFxn {
             $errors['caddress'] = 'Address field required.';
         }
 
-        if (array_key_exists('complainttype', $_POST)) {
+        if (array_key_exists('complainttype ', $_POST)) {
             if (!isset($_POST['complainttype']) && $_POST['complainttype'] == '') {
                 $errors['complainttype'] = 'Complaint type field required.';
             }
@@ -172,7 +168,7 @@ class complaintFunctions extends commonFxn {
             $cemail = $this->real_escape_string($_POST['cemail']);
             $contactno = $this->real_escape_string($_POST['contactno']);
             $caddress = $this->real_escape_string($_POST['caddress']);
-            if (array_key_exists('complainttype', $_POST)) {
+            if (array_key_exists('complainttype ', $_POST)) {
                 $complainttype = $this->real_escape_string($_POST['complainttype']);
             }
             $cdescription = $this->real_escape_string($_POST['cdescription']);

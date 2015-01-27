@@ -1,10 +1,11 @@
 <?php
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+error_reporting(0);
+ini_set('display_errors', 0);
 session_start();
+//define('SITE_URL', 'http://49.50.76.128/plrscrm/');
 define('SITE_URL', 'http://localhost/plrscrm/');
-define('BASE_PATH', 'C:/xampp/htdocs/plrscrm/');
+define('BASE_PATH', $_SERVER['DOCUMENT_ROOT'] . '/plrscrm/');
 define('CRM_TITLE', 'Helpline for Punjab Land & Property Services');
 define('CSS_URL', SITE_URL . 'css/');
 define('IMAGE_URL', SITE_URL . 'images/');
@@ -21,6 +22,7 @@ define('FOOTER', INCLUDE_URL . 'footer.php');
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
+//define('DB_PASS', 'HGhg**123');
 define('DB_NAME', 'plrscrm');
 
 define('PHOTO_UPLOAD_DIRECTORY', 'uploads/docs/');

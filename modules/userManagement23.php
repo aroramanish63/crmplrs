@@ -8,86 +8,46 @@ $userFunc = new userFunctions();
     .input-short{
         width:19%;
     }
-
-    .leftsection{
-        width: 25%;
-        float: left;
-
-    }
-    .leftsection .input-short, .rightsection .input-short { width: 70% !important; }
-    .rightsection{
-        width: 25%;
-        float: left;
-
-    }
-
-
-
 </style>
 <div class="container_12">
     <?php
-    $Adduserbtn = '<a title="Add User" href="' . SITE_URL . '?page=addUser" class="submit-green" style="float:right;color:#fff;padding:0px 12px;">Add</a>';
+    $Adduserbtn = '<a title="Add User" href="' . SITE_URL . '?page=addUser"><input class="submit-green" style="float:right" type="button" value="Add" /></a>';
     ?>
     <div class="bottom-spacing">
         <div>
             <form name="searchfrm" id="searchfrm" method="post" action="" onsubmit="return validatefilter();">
-                <fieldset>
-                    <div class="mainsection">
-                        <div class="leftsection">
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="u_group">User Group: </label>
-                                <select name="u_group" id="u_group" class="input-short" style="float:left;margin-right: 10px">
-                                    <option value="">Select User Group</option>
-                                    <?php
+                <p>
+                    <label style="float:left;margin-right: 10px;" for="u_group">User Group: </label>&nbsp;&nbsp;
+                    <select name="u_group" id="u_group" class="input-short" style="float:left;margin-right: 10px">
+                        <option value="">Select User Group</option>
+                        <?php
+                        $selected = '';
+                        $u_group = $userFunc->getUserGroup();
+                        if (is_array($u_group) && count($u_group) > 0) {
+                            foreach ($u_group as $type) {
+                                if (isset($_REQUEST['u_group']) && ($type['id'] === $_REQUEST['u_group'])) {
+                                    $selected = 'selected="selected"';
+                                }
+                                else {
                                     $selected = '';
-                                    $u_group = $userFunc->getUserGroup();
-                                    if (is_array($u_group) && count($u_group) > 0) {
-                                        foreach ($u_group as $type) {
-                                            if (isset($_REQUEST['u_group']) && ($type['id'] === $_REQUEST['u_group'])) {
-                                                $selected = 'selected="selected"';
-                                            }
-                                            else {
-                                                $selected = '';
-                                            }
-                                            echo '<option value="' . $type['id'] . '" ' . $selected . '>' . $type['group_name'] . '</option>';
-                                        }
-                                    }
-                                    ?>
-                                </select>
-                            </p>
-                            <br/>
-                            <p>
-                                <label style="float:left;margin-right: 10px;">User Status:</label>
-                                <select style="float:left;margin-right: 10px;" name="status" id="status" class="input-short">
-                                    <option value="">Select Status</option>
-                                    <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Active</option>
-                                    <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Inactive</option>
-                                </select>
-                            </p>
-
-                        </div>
-                        <div class="rightsection">
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="email">Email: </label>&nbsp;
-                                <input type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
-                            </p>
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="mobile">Mobile: </label>
-                                <input type="text" name="mobile" id="mobile" class="input-short" value="<?php echo (isset($_REQUEST['mobile'])) ? $_REQUEST['mobile'] : '' ?>"/>
-                            </p>
-
-                        </div>
-                        <p>
-                            <label style="float:left;margin-right: 80px;" for="email">&nbsp;</label>
-                            <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green">
-                        </p>
-                    </div>
-                </fieldset>
-                <fieldset>
+                                }
+                                echo '<option value="' . $type['id'] . '" ' . $selected . '>' . $type['group_name'] . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
+                    <label style="float:left;margin-right: 10px;">User Status.:</label>
+                    <select style="float:left;margin-right: 10px;" name="status" id="status" class="input-short">
+                        <option value="">Select Status</option>
+                        <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Active</option>
+                        <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Inactive</option>
+                    </select>
+                    &nbsp;&nbsp;
+                    <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green">
                     <?php echo ($_SESSION['role']['addUser']) ? $Adduserbtn : ''; ?>
-                </fieldset>
-            </form>
+                </p>
 
+            </form>
         </div>
     </div>
     <div style="clear: both"></div>

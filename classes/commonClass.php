@@ -64,6 +64,22 @@ class commonClass {
             $this->setMessage('Database not connected.');
         }
     }
+	 public function updateLoginAttempts($username) {
+        if ($this->connectionid) {
+            if ($username != '') {
+                $userSql = "update tbl_user set login_attempts = login_attempts+1 where username = '".$username."'";
+				
+                $resultSet = mysql_query($userSql) or die(mysql_error());
+                if (mysql_num_rows($resultSet) > 0) {
+                    return true;
+                }
+            }
+           
+        }
+        else {
+            $this->setMessage('Database not connected.');
+        }
+    }
 
     public function getUsergroupandUsername($uid) {
         if ($uid != '') {
@@ -85,9 +101,23 @@ class commonClass {
         }
     }
 
+ 	public function getLoginAttempts($uname)
+ 	{
+		$userDetails = "select * from tbl_user where `username` = '" . mysql_real_escape_string($uname) . "'";
+        $resultSet = mysql_query($userDetails) or die(mysql_error());
+		if (mysql_num_rows($resultSet) > 0) {
+			$row = mysql_fetch_array($resultSet);
+			return $row;
+		}
+		else {
+            $this->setMessage('No User.');
+        }
+ 	}
+	
     public function checkLogin($username, $pass) {
         if ($this->connectionid) {
             if ($username != '' && $pass != '') {
+				
                 $userSql = "select * from tbl_user where `username` = '" . mysql_real_escape_string($username) . "' and `password` = '" . mysql_real_escape_string($pass) . "' and `status` = '1'";
                 $resultSet = mysql_query($userSql) or die(mysql_error());
                 if (mysql_num_rows($resultSet) > 0) {

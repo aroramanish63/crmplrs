@@ -2,17 +2,19 @@
 
 #header-main #logo { 
 	background: url(../images/logo.gif) no-repeat left 10px; 
-	width: 100%; 
+	width: auto;
+	float:left; 
 	height: 70px; 
+	margin-top:15px;
 	}
 
 
-
+.headernav { width:auto; float:right;}
 	
 /* -------------------- Header background -------------------- */
 	
 #header-main { 
-	background: #005195 url(../images/header-bg.jpg) repeat-x top left; 
+	background: #191919; 
 	}
 
 

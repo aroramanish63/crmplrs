@@ -11,7 +11,6 @@ if ((isset($_REQUEST['txtusername']) && !empty($_REQUEST['txtusername'])) && (is
     if ($commonObj->userNameExist($uname)) {
         $loginarr = $commonObj->checkLogin($uname, $pass);
         if (is_array($loginarr)) {
-			
             $_SESSION['uid'] = $loginarr['id'];
             $_SESSION['username'] = $loginarr['username'];
             $_SESSION['user_group'] = $loginarr['user_group'];
@@ -44,70 +43,18 @@ if ((isset($_REQUEST['txtusername']) && !empty($_REQUEST['txtusername'])) && (is
                     }
                 }
             }
-			$userUpdate = "update tbl_user set login_attempts = '0' where username = '".$uname."'";
-			$resultSet = mysql_query($userUpdate) or die(mysql_error());
+
             header('Location:' . SITE_URL);
             exit();
         }
         else {
             $unamemsg = $commonObj->getMessage();
-			$loginAttempts = $commonObj->getLoginAttempts($uname);
-			
-			if($loginAttempts['login_attempts'] == '5'){	
-				$userUpdate = "update tbl_user set status = '0' where username = '".$uname."'";
-				$resultSet = mysql_query($userUpdate) or die(mysql_error());
-				$username = $loginAttempts['username'];
-				$email = $loginAttempts['email'];
-				
-				sendmailtoadmin($username,$email);
-			}
-			else{
-				$commonObj->updateLoginAttempts($uname);
-			}
-			
         }
     }
     else {
-		
         $unamemsg = $commonObj->getMessage();
     }
-	
 }
-function sendmailtoadmin($username,$email){
-	
-		require 'PHPMailer/class.phpmailer.php';
-		$html = '';
-		$subject = 'PLRSCRM User Deactivated';
-	
-		$sentfrom = 'plrscrm';
-		$sentname = 'plrscrm';
-	
-		$mail = new PHPMailer();
-		$mail->IsSMTP();                           // tell the class to use SMTP
-		$mail->SMTPAuth = true;                  // enable SMTP authentication
-		$mail->SMTPSecure = 'tls';
-		$mail->Port = 25;                    // set the SMTP server port
-		$mail->Host = "mail.cloudoye.in";
-		$mail->Username = "admin@cloudoye.in";
-		$mail->Password = "Sghdwsw$3231";
-		// SMTP server password
-		$mail->IsHTML(true);
-		$mail->SetFrom($sentfrom, $sentname);
-		
-		$mail->AddAddress("harpreet.kaur@cyfuture.com");
-		
-		$mail->Subject = $subject;
-		$mail->SMTPDebug = 2;
-		$html = 'User with username : '.$username.' and Email : '.$email.' has been deactivated due to wrong login attempts!';
-		
-		$mail->Body = $html;
-		//$mail->WordWrap = 50;
-	
-		if ($mail->Send())
-		{
-			//echo '<!-- Mail sent -->';
-		}
-}	
 ?>
 <!doctype html>
 <head>

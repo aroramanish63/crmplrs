@@ -76,7 +76,8 @@
             <div id="header-main">
                 <div class="container_12">
                     <div class="grid_12">
-                        <div id="logo">
+                        <div id="logo"><img src="images/logo-plrs-inner.png" />" </div>
+                        <div class="headernav">
                             <ul id="drop-nav">
                                 <li><a href="<?php echo SITE_URL; ?>">Dashboard</a></li>
                                 <?php
@@ -114,8 +115,9 @@
                                 <?php } ?>
                                 <?php echo (isset($_SESSION['role']['userProfile'])) ? '<li><a href="' . SITE_URL . '?page=userProfile">Profile</a></li>' : ''; ?>
                             </ul>
+                            </div>
 
-                        </div><!-- End. #Logo -->
+                       
                     </div><!-- End. .grid_12-->
                     <div style="clear: both;"></div>
                 </div><!-- End. .container_12 -->
