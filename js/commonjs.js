@@ -264,6 +264,7 @@ function validatecomplaintfrm() {
     var cemail = document.getElementById('cemail');
     var contactno = document.getElementById('contactno');
     var caddress = document.getElementById('caddress');
+    var city = document.getElementById('city');
     var complainttype = document.getElementById('complainttype');
     var cdescription = document.getElementById('cdescription');
 
@@ -300,6 +301,12 @@ function validatecomplaintfrm() {
     if (caddress.value == '' || caddress.value.replace(/\s+$/, '') == '') {
         alert('Please enter address.');
         caddress.focus();
+        return false;
+    }
+
+    if (city.value == '' || city.value.replace(/\s+$/, '') == '') {
+        alert('Please enter city.');
+        city.focus();
         return false;
     }
 

@@ -78,7 +78,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                     }
                 }
                 ?>
-                <form action="" method="post" name="profilefrm" id="profilefrm" onsubmit="return validateprofilefrm();">
+                <form action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" id="profilefrm" onsubmit="return validateprofilefrm();">
                     <p>
                         <label><strong>Username</strong> : <?php echo $_SESSION['username'] ?></label>
                     </p>

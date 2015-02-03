@@ -60,6 +60,10 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                                 <label>Email <span class="red">*</span></label>
                                 <input type="text" name="cemail" class="input-short" id="cemail" value="<?php echo (isset($_REQUEST['cemail'])) ? $_REQUEST['cemail'] : ''; ?>" />
                             </p>
+                            <p>
+                                <label>City <span class="red">*</span></label>
+                                <input type="text" name="city" class="input-short" id="city" value="<?php echo (isset($_REQUEST['city'])) ? $_REQUEST['city'] : ''; ?>" />
+                            </p>
                         </div>
                         <div class="rightsection">
                             <p>
@@ -100,9 +104,17 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                         <label>Complaint Description <span class="red">*</span></label>
                         <textarea name="cdescription" class="input-short" id="cdescription"><?php echo (isset($_REQUEST['cdescription'])) ? $_REQUEST['cdescription'] : ''; ?></textarea>
                     </p>
+                    <p>
+                        <input type="radio" style="float: left;margin-right:5px;" name="is_sms" value="1" id="is_sms" onclick="document.getElementById('txt_content_p').style.display = 'block';" />
+                        <label style="float: left;margin-right:10px;">SMS</label>
+                        <input type="radio" style="float: left;margin-right:5px;" name="is_sms" value="2" id="is_email" onclick="document.getElementById('txt_content_p').style.display = 'block';" />
+                        <label style="float: left;">Email</label>
+                    </p>
+                    <div style="clear:both"></div>
+                    <p id="txt_content_p" style="display:none;"><label>Content<span class="red">*</span></label><input type="text" class="input-short" name="txt_content" id="txt_content" /></p>
                 </fieldset>
                 <fieldset>
-                    <input class="submit-gray" type="button" value="Back" onclick="back();" />
+                    <!--<input class="submit-gray" type="button" value="Back" onclick="back();" />-->
                     <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
                 </fieldset>
             </form>

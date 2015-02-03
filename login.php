@@ -1,8 +1,7 @@
 <?php
 include('./core/config.php');
 if (isset($_SESSION['uid']) && !empty($_SESSION['uid'])) {
-    header('Location:' . SITE_URL);
-    exit();
+    $commonObj->redirectUrl();
 }
 
 if ((isset($_REQUEST['txtusername']) && !empty($_REQUEST['txtusername'])) && (isset($_REQUEST['txtpassword']) && !empty($_REQUEST['txtpassword']))) {
@@ -11,7 +10,7 @@ if ((isset($_REQUEST['txtusername']) && !empty($_REQUEST['txtusername'])) && (is
     if ($commonObj->userNameExist($uname)) {
         $loginarr = $commonObj->checkLogin($uname, $pass);
         if (is_array($loginarr)) {
-			
+
             $_SESSION['uid'] = $loginarr['id'];
             $_SESSION['username'] = $loginarr['username'];
             $_SESSION['user_group'] = $loginarr['user_group'];
@@ -44,76 +43,79 @@ if ((isset($_REQUEST['txtusername']) && !empty($_REQUEST['txtusername'])) && (is
                     }
                 }
             }
-			$userUpdate = "update tbl_user set login_attempts = '0' where username = '".$uname."'";
-			$resultSet = mysql_query($userUpdate) or die(mysql_error());
-            header('Location:' . SITE_URL);
+            $userUpdate = "update tbl_user set login_attempts = '0' where username = '" . $uname . "'";
+            $resultSet = mysql_query($userUpdate) or die(mysql_error());
+            if ($commonObj->isCallCentreStaff($_SESSION['uid'])) {
+                $commonObj->redirectUrl('viewComplaints');
+            }
+            else {
+                $commonObj->redirectUrl();
+            }
             exit();
         }
         else {
             $unamemsg = $commonObj->getMessage();
-			$loginAttempts = $commonObj->getLoginAttempts($uname);
-			
-			if($loginAttempts['login_attempts'] == '5'){	
-				$userUpdate = "update tbl_user set status = '0' where username = '".$uname."'";
-				$resultSet = mysql_query($userUpdate) or die(mysql_error());
-				$username = $loginAttempts['username'];
-				$email = $loginAttempts['email'];
-				
-				sendmailtoadmin($username,$email);
-			}
-			else{
-				$commonObj->updateLoginAttempts($uname);
-			}
-			
+            $loginAttempts = $commonObj->getLoginAttempts($uname);
+
+            if ($loginAttempts['login_attempts'] == '5') {
+                $userUpdate = "update tbl_user set status = '0' where username = '" . $uname . "'";
+                $resultSet = mysql_query($userUpdate) or die(mysql_error());
+                $username = $loginAttempts['username'];
+                $email = $loginAttempts['email'];
+
+                sendmailtoadmin($username, $email);
+            }
+            else {
+                $commonObj->updateLoginAttempts($uname);
+            }
         }
     }
     else {
-		
+
         $unamemsg = $commonObj->getMessage();
     }
-	
 }
-function sendmailtoadmin($username,$email){
-	
-		require 'PHPMailer/class.phpmailer.php';
-		$html = '';
-		$subject = 'PLRSCRM User Deactivated';
-	
-		$sentfrom = 'plrscrm';
-		$sentname = 'plrscrm';
-	
-		$mail = new PHPMailer();
-		$mail->IsSMTP();                           // tell the class to use SMTP
-		$mail->SMTPAuth = true;                  // enable SMTP authentication
-		$mail->SMTPSecure = 'tls';
-		$mail->Port = 25;                    // set the SMTP server port
-		$mail->Host = "mail.cloudoye.in";
-		$mail->Username = "admin@cloudoye.in";
-		$mail->Password = "Sghdwsw$3231";
-		// SMTP server password
-		$mail->IsHTML(true);
-		$mail->SetFrom($sentfrom, $sentname);
-		
-		$mail->AddAddress("harpreet.kaur@cyfuture.com");
-		
-		$mail->Subject = $subject;
-		$mail->SMTPDebug = 2;
-		$html = 'User with username : '.$username.' and Email : '.$email.' has been deactivated due to wrong login attempts!';
-		
-		$mail->Body = $html;
-		//$mail->WordWrap = 50;
-	
-		if ($mail->Send())
-		{
-			//echo '<!-- Mail sent -->';
-		}
-}	
+
+function sendmailtoadmin($username, $email) {
+
+    require 'PHPMailer/class.phpmailer.php';
+    $html = '';
+    $subject = 'PLRSCRM User Deactivated';
+
+    $sentfrom = 'plrscrm';
+    $sentname = 'plrscrm';
+
+    $mail = new PHPMailer();
+    $mail->IsSMTP();                           // tell the class to use SMTP
+    $mail->SMTPAuth = true;                  // enable SMTP authentication
+    $mail->SMTPSecure = 'tls';
+    $mail->Port = 25;                    // set the SMTP server port
+    $mail->Host = "mail.cloudoye.in";
+    $mail->Username = "admin@cloudoye.in";
+    $mail->Password = "Sghdwsw$3231";
+    // SMTP server password
+    $mail->IsHTML(true);
+    $mail->SetFrom($sentfrom, $sentname);
+
+    $mail->AddAddress("harpreet.kaur@cyfuture.com");
+
+    $mail->Subject = $subject;
+    $mail->SMTPDebug = 2;
+    $html = 'User with username : ' . $username . ' and Email : ' . $email . ' has been deactivated due to wrong login attempts!';
+
+    $mail->Body = $html;
+    //$mail->WordWrap = 50;
+
+    if ($mail->Send()) {
+        //echo '<!-- Mail sent -->';
+    }
+}
 ?>
 <!doctype html>
 <head>
     <!-- General Metas -->
     <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><!-- Force Latest IE rendering engine -->
+    <!--<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> Force Latest IE rendering engine -->
     <title>Login<?php echo defined('CRM_TITLE') ? ' - ' . CRM_TITLE : ''; ?></title>
 
     <!-- Stylesheets -->
@@ -133,8 +135,8 @@ function sendmailtoadmin($username,$email){
 
     <!-- Primary Page Layout -->
     <div class="container">
-    <div style="height:150px;"></div>
-    <div class="plrslogo" style="text-align:center;"> <img src="images/logo-plrs.png" alt="" /> </div>
+        <div style="height:150px;"></div>
+        <div class="plrslogo" style="text-align:center;"> <img src="images/logo-plrs.png" alt="" /> </div>
         <div class="form-bg" style="margin-top:0px !important;">
             <form name="loginForm" id="loginForm" action="" method="post">
                 <h2>Login</h2>

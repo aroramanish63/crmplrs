@@ -5,12 +5,14 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
 ?>
 <script type="text/javascript">
     function validatefilter() {
-        var statusclearance = document.getElementById('statusclearance');
-//        if (statusclearance.value == '') {
-//            alert('Please select filter.');
-//            statusclearance.focus();
-//            return false;
-//        }
+        var complaintno = document.getElementById('complaintno');
+        var email = document.getElementById('email');
+        var contact_no = document.getElementById('contact_no');
+        if (complaintno.value.replace(/\s+$/, '') == '' && email.value.replace(/\s+$/, '') == '' && contact_no.value.replace(/\s+$/, '') == '') {
+            alert('Please enter atleast one filter value.');
+            complaintno.focus();
+            return false;
+        }
         window.searchfrm.submit();
     }
 </script>
@@ -23,45 +25,32 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
     <?php
     $Adduserbtn = '<a title="Add Complaint/Bill" href="' . SITE_URL . '?page=addComplaints" class="submit-green" style="float:right;color:#fff;padding:0px 12px;">Add</a>';
     ?>
-    <div class="bottom-spacing">
-        <div>
-            <form name="searchfrm" id="searchfrm" method="post" action="" onsubmit="return validatefilter();">
-                <p>
-                    <label style="float:left;margin-right: 10px;" for="fromdate">Complaint Type: </label>&nbsp;&nbsp;
-                    <select name="statusclearance" id="statusclearance" class="input-short" style="float:left;margin-right: 10px;width:160px;">
-                        <option value="">Select Complaint Type</option>
-                        <?php
-                        $selected = '';
-                        $complaint_type = $complaintFunc->getPLRSComplaintType();
-                        if (is_array($complaint_type) && count($complaint_type) > 0) {
-                            foreach ($complaint_type as $type) {
-                                if (isset($_REQUEST['statusclearance']) && ($type['id'] === $_REQUEST['statusclearance'])) {
-                                    $selected = 'selected="selected"';
-                                }
-                                else {
-                                    $selected = '';
-                                }
-                                echo '<option value="' . $type['id'] . '" ' . $selected . '>' . $type['complaint_type'] . '</option>';
-                            }
-                        }
-                        ?>
-                    </select>
-                    <label style="float:left;margin-right: 10px;">Complaint No.:</label>
-                    <input style="float:left;margin-right: 10px;width:160px;" type="text" name="complaintno" class="input-short" id="complaintno" value="<?php echo (isset($_REQUEST['complaintno'])) ? $_REQUEST['complaintno'] : ''; ?>" />
-                    <label style="float:left;margin-right: 10px;">Complaint Status:</label>
-                    <select style="float:left;margin-right: 10px;width:160px;" name="status" id="status" class="input-short">
-                        <option value="">Select Status</option>
-                        <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Open</option>
-                        <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Close</option>
-                    </select>
-                    <label style="float:left;margin-right: 10px;">Email:</label>
-                    <input style="float:left;margin-right: 10px;width:160px;" type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
-                    <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green">
-                    <?php // echo (isset($_SESSION['role']['addComplaints']) && !empty($_SESSION['role']['addComplaints'])) ? $Adduserbtn : ''; ?>
-                </p>
+    <div class="bottom-spacing" style="width:<?php echo (isset($_POST['btnsearch'])) ? '100%' : '96%'; ?>;margin: 0 auto; float: right;">
+        <form name="searchfrm" id="searchfrm" method="post" action="" onsubmit="return validatefilter();">
+            <p>
+                <label style="float:left;margin-right: 10px;">Complaint No.:</label>
+                <input style="float:left;margin-right: 10px;width:160px;" type="text" name="complaintno" class="input-short" id="complaintno" value="<?php echo (isset($_REQUEST['complaintno'])) ? $_REQUEST['complaintno'] : ''; ?>" />
+                <!--                <label style="float:left;margin-right: 10px;">Complaint Status:</label>
+                                <select style="float:left;margin-right: 10px;width:160px;" name="status" id="status" class="input-short">
+                                    <option value="">Select Status</option>
+                                    <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Open</option>
+                                    <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Close</option>
+                                </select>-->
+                <label style="float:left;margin-right: 10px;">Email:</label>
+                <input style="float:left;margin-right: 10px;width:160px;" type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
+                <label style="float:left;margin-right: 10px;">Contact No.:</label>
+                <input style="float:left;margin-right: 10px;width:160px;" type="text" name="contact_no" id="contact_no" class="input-short" value="<?php echo (isset($_REQUEST['contact_no'])) ? $_REQUEST['contact_no'] : '' ?>"/>
+                <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green" style="float:left;">
+                <?php
+                if (isset($_POST['btnsearch']) && $complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
+                    echo '<input type="button" name="btnsearch" value="Back" onclick="gotopage(\'viewComplaints\')" class="submit-gray" style="float:left;">';
+                }
+                ?>
+                <?php // echo (isset($_SESSION['role']['addComplaints']) && !empty($_SESSION['role']['addComplaints'])) ? $Adduserbtn : ''; ?>
+            </p>
+            <p>&nbsp;</p>
 
-            </form>
-        </div>
+        </form>
     </div>
     <div style="clear:both;"></div>
     <?php
@@ -111,7 +100,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['name'] . '</td>';
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
-                                        echo '<td>' . date('d-m-Y', strtotime($list['add_date'])) . '</td>';
+                                        echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
                                         echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
@@ -125,7 +114,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['name'] . '</td>';
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
-                                        echo '<td>' . date('d-m-Y', strtotime($list['add_date'])) . '</td>';
+                                        echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
                                         echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
@@ -141,7 +130,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['name'] . '</td>';
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
-                                        echo '<td>' . date('d-m-Y', strtotime($list['add_date'])) . '</td>';
+                                        echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
                                         echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
@@ -157,7 +146,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['name'] . '</td>';
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
-                                        echo '<td>' . date('d-m-Y', strtotime($list['add_date'])) . '</td>';
+                                        echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
                                         echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
@@ -172,7 +161,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                     echo '<td>' . $list['name'] . '</td>';
                                     echo '<td>' . $list['email'] . '</td>';
                                     echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
-                                    echo '<td>' . date('d-m-Y', strtotime($list['add_date'])) . '</td>';
+                                    echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
                                     echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
                                     echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                     echo '</tr>';

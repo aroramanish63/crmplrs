@@ -20,74 +20,53 @@ $userFunc = new userFunctions();
         float: left;
 
     }
-
-
-
 </style>
 <div class="container_12">
     <?php
-    $Adduserbtn = '<a title="Add User" href="' . SITE_URL . '?page=addUser" class="submit-green" style="float:right;color:#fff;padding:0px 12px;">Add</a>';
+    $Adduserbtn = '<a title="Add User" href="' . SITE_URL . '?page=addUser" class="submit-green" style="float:right;color:#fff;padding:1px 20px;">Add</a>';
     ?>
     <div class="bottom-spacing">
         <div>
-            <form name="searchfrm" id="searchfrm" method="post" action="" onsubmit="return validatefilter();">
-                <fieldset>
-                    <div class="mainsection">
-                        <div class="leftsection">
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="u_group">User Group: </label>
-                                <select name="u_group" id="u_group" class="input-short" style="float:left;margin-right: 10px">
-                                    <option value="">Select User Group</option>
-                                    <?php
+            <form id="searchfrm" method="post" action="" onsubmit="return validatefilter();">
+
+                <p>
+                    <label style="float:left;margin-right: 10px;" for="u_group">User Group: </label>
+                    <select name="u_group" id="u_group" class="input-short" style="float:left;margin-right: 10px;width:180px;">
+                        <option value="">Select User Group</option>
+                        <?php
+                        $selected = '';
+                        $u_group = $userFunc->getUserGroup();
+                        if (is_array($u_group) && count($u_group) > 0) {
+                            foreach ($u_group as $type) {
+                                if (isset($_REQUEST['u_group']) && ($type['id'] === $_REQUEST['u_group'])) {
+                                    $selected = 'selected="selected"';
+                                }
+                                else {
                                     $selected = '';
-                                    $u_group = $userFunc->getUserGroup();
-                                    if (is_array($u_group) && count($u_group) > 0) {
-                                        foreach ($u_group as $type) {
-                                            if (isset($_REQUEST['u_group']) && ($type['id'] === $_REQUEST['u_group'])) {
-                                                $selected = 'selected="selected"';
-                                            }
-                                            else {
-                                                $selected = '';
-                                            }
-                                            echo '<option value="' . $type['id'] . '" ' . $selected . '>' . $type['group_name'] . '</option>';
-                                        }
-                                    }
-                                    ?>
-                                </select>
-                            </p>
-                            <br/>
-                            <p>
-                                <label style="float:left;margin-right: 10px;">User Status:</label>
-                                <select style="float:left;margin-right: 10px;" name="status" id="status" class="input-short">
-                                    <option value="">Select Status</option>
-                                    <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Active</option>
-                                    <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Inactive</option>
-                                </select>
-                            </p>
+                                }
+                                echo '<option value="' . $type['id'] . '" ' . $selected . '>' . $type['group_name'] . '</option>';
+                            }
+                        }
+                        ?>
+                    </select>
 
-                        </div>
-                        <div class="rightsection">
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="email">Email: </label>&nbsp;
-                                <input type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
-                            </p>
-                            <p>
-                                <label style="float:left;margin-right: 10px;" for="mobile">Mobile: </label>
-                                <input type="text" name="mobile" id="mobile" class="input-short" value="<?php echo (isset($_REQUEST['mobile'])) ? $_REQUEST['mobile'] : '' ?>"/>
-                            </p>
+                    <label style="float:left;margin-right: 10px;">User Status:</label>
+                    <select style="float:left;margin-right: 10px;width:180px;" name="status" id="status" class="input-short">
+                        <option value="">Select Status</option>
+                        <option value="1" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '1')) ? 'selected="selected"' : ''; ?>>Active</option>
+                        <option value="0" <?php echo (isset($_REQUEST['status']) && ($_REQUEST['status'] == '0')) ? 'selected="selected"' : ''; ?>>Inactive</option>
+                    </select>
 
-                        </div>
-                        <p>
-                            <label style="float:left;margin-right: 80px;" for="email">&nbsp;</label>
-                            <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green">
-                        </p>
-                    </div>
-                </fieldset>
-                <fieldset>
+                    <label style="float:left;margin-right: 10px;" for="email">Email: </label>&nbsp;
+                    <input type="text" style="float:left;margin-right: 10px;width:180px;" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
+
+                    <label style="float:left;margin-right: 10px;" for="mobile">Mobile: </label>
+                    <input type="text" style="float:left;margin-right: 10px;width:180px;" name="mobile" id="mobile" class="input-short" value="<?php echo (isset($_REQUEST['mobile'])) ? $_REQUEST['mobile'] : '' ?>"/>
+
+                    <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green" />
                     <?php echo ($_SESSION['role']['addUser']) ? $Adduserbtn : ''; ?>
-                </fieldset>
+                </p>
             </form>
-
         </div>
     </div>
     <div style="clear: both"></div>
@@ -137,7 +116,7 @@ $userFunc = new userFunctions();
                             echo '<td>' . $list['address'] . '</td>';
                             if (isset($_SESSION['role']['editUser']) && ($_SESSION['role']['editUser'] == true)) {
                                 echo ($list['user_group'] != 1) ? '<td><a href="' . SITE_URL . '?page=editUser&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>' : (($_SESSION['user_group'] == 1) ? '<td><a href="' . SITE_URL . '?page=editUser&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>' : '');
-                                echo ($list['user_group'] == 1) ? (($list['status'] == '1') ? '<td>&nbsp;</td>' : '<td><img src="' . IMAGE_URL . 'minus-circle.gif" width="16" title="In-active" height="16" alt="status" /></td>') : (($list['status'] == '1') ? '<td><img src="' . IMAGE_URL . 'tick-circle.gif" width="16" id="actives_' . $list['id'] . '" style="cursor:pointer;" onclick=\'statusChange(this.id,"' . $list['id'] . '","' . get_class($userFunc) . '")\'  title="Active" height="16" alt="status" /></a></td>' : '<td><img src="' . IMAGE_URL . 'minus-circle.gif" id="inactives_' . $list['id'] . '" style="cursor:pointer;" onclick=\'statusChange(this.id,"' . $list['id'] . '","' . get_class($userFunc) . '")\' width="16" title="In-active" height="16" alt="status" /></td>');
+                                echo ($list['user_group'] == 1) ? (($list['status'] == '1') ? '<td>&nbsp;</td>' : '<td><img src="' . IMAGE_URL . 'minus-circle.gif" width="16" title="In-active" height="16" alt="status" /></td>') : (($list['status'] == '1') ? '<td><img src="' . IMAGE_URL . 'tick-circle.gif" width="16" id="actives_' . $list['id'] . '" style="cursor:pointer;" onclick=\'statusChange(this.id,"' . $list['id'] . '","' . get_class($userFunc) . '")\'  title="Active" height="16" alt="status" /></td>' : '<td><img src="' . IMAGE_URL . 'minus-circle.gif" id="inactives_' . $list['id'] . '" style="cursor:pointer;" onclick=\'statusChange(this.id,"' . $list['id'] . '","' . get_class($userFunc) . '")\' width="16" title="In-active" height="16" alt="status" /></td>');
                             }
                             echo isset($_SESSION['role']['resetPassword']) ? '<td><a href="' . SITE_URL . '?page=resetPassword&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'key_go.png" width="16" title="Reset Password" height="16" alt="Reset Password" /></a></td>' : '';
 //                                       echo  '<td>

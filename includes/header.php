@@ -67,7 +67,7 @@
                         <a href="<?php echo SITE_URL ?>logout.php" title="logout" id="logout">
                             Logout
                         </a>
-                        <span style="position: relative;top:10px;left: 190px;">Welcome <?php echo ($_SESSION['name'] != '') ? ucfirst($_SESSION['name']) : ''; ?></span>
+                        <span style="position: relative;top:10px;left: 125px;">Welcome <?php echo ($_SESSION['name'] != '') ? ucfirst($_SESSION['name']) : ''; ?></span>
                     </div>
                 </div>
                 <div style="clear:both;"></div>
@@ -76,8 +76,8 @@
             <div id="header-main">
                 <div class="container_12">
                     <div class="grid_12">
-                        <div id="logo"><img src="images/logo-plrs-inner.png" />" </div>
-                        <div class="headernav">
+                        <div id="logo"><a href="<?php echo SITE_URL; ?>"><img alt="PLRS logo" src="images/logo-plrs-inner.png" /></a></div>
+                        <div class="headernav" style="margin-right: 100px;">
                             <ul id="drop-nav">
                                 <li><a href="<?php echo SITE_URL; ?>">Dashboard</a></li>
                                 <?php
@@ -114,10 +114,16 @@
                                     </li>
                                 <?php } ?>
                                 <?php echo (isset($_SESSION['role']['userProfile'])) ? '<li><a href="' . SITE_URL . '?page=userProfile">Profile</a></li>' : ''; ?>
+                                <li><a href="#">Links</a>
+                                    <ul>
+                                        <li><a href="http://210.212.41.167/frmSelectDistrict.aspx">Fard</a></li>
+                                        <li><a href="http://202.164.37.185/">Stamp Duty Calculator</a></li>
+                                    </ul>
+                                </li>
                             </ul>
-                            </div>
+                        </div>
 
-                       
+
                     </div><!-- End. .grid_12-->
                     <div style="clear: both;"></div>
                 </div><!-- End. .container_12 -->

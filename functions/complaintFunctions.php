@@ -53,6 +53,10 @@ class complaintFunctions extends commonFxn {
             $condition .= " and email='" . $this->real_escape_string($_POST['email']) . "'";
         }
 
+        if (isset($_POST['contact_no']) && $_POST['contact_no'] !== '') {
+            $condition .= " and contactno='" . $this->real_escape_string($_POST['contact_no']) . "'";
+        }
+
         $selectData = mysql_query("select * from $this->plrs_complaint $condition $order") or die(mysql_error());
         if ($this->countTablerows($selectData) > 0) {
             while ($rows = mysql_fetch_assoc($selectData)) {
@@ -130,6 +134,10 @@ class complaintFunctions extends commonFxn {
             }
         }
 
+        if (!isset($_POST['city']) && $_POST['city'] == '') {
+            $errors['city'] = 'City field required.';
+        }
+
         if (!isset($_POST['contactno']) && $_POST['contactno'] == '') {
             $errors['contactno'] = 'Contact No. field required.';
         }
@@ -165,11 +173,18 @@ class complaintFunctions extends commonFxn {
             }
         }
 
+        if (array_key_exists('is_sms', $_POST)) {
+            if (!isset($_POST['txt_content']) && empty($_POST['txt_content'])) {
+                $errors['txt_content'] = 'Content field required.';
+            }
+        }
+
         if (count($errors) == 0) {
             $emailFunc = $this->load_class_object('emailFunctions');
 
             $cname = $this->real_escape_string($_POST['cname']);
             $cemail = $this->real_escape_string($_POST['cemail']);
+            $city = $this->real_escape_string($_POST['city']);
             $contactno = $this->real_escape_string($_POST['contactno']);
             $caddress = $this->real_escape_string($_POST['caddress']);
             if (array_key_exists('complainttype', $_POST)) {
@@ -179,7 +194,10 @@ class complaintFunctions extends commonFxn {
             $ticket_no = $this->getLastTicket();
             $created_by = (isset($_SESSION['uid'])) ? $_SESSION['uid'] : '';
             $user_group = (isset($_SESSION['user_group'])) ? $_SESSION['user_group'] : '';
-
+            if (array_key_exists('is_sms', $_POST)) {
+                $is_sms = $_POST['is_sms'];
+                $txt_content = $_POST['txt_content'];
+            }
             $add_date = date('Y-m-d H:i:s');
 
             if ($edit === true) {
@@ -188,7 +206,9 @@ class complaintFunctions extends commonFxn {
                 $remarks = $this->real_escape_string($_POST['comp_remarks']);
 
                 if (isset($_POST['status']) && $_POST['status'] == '1' && ($_POST['comp_type'] == '1')) {
+
                     $status = $this->real_escape_string($_POST['status']);
+
                     $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='$status' where `id` = '$comp_id'") or die(mysql_error());
 
                     if (is_a($emailFunc, 'emailFunctions')) {
@@ -256,8 +276,10 @@ class complaintFunctions extends commonFxn {
                 }
             }
             else {
-                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `complaint_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$complainttype','$ticket_no','$cdescription','$created_by','$add_date','0')") or die(mysql_error());
+                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `city`, `complaint_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$city','$complainttype','$ticket_no','$cdescription','$created_by','$add_date','0')") or die(mysql_error());
                 if ($insertQry) {
+                    $last_insert_id = mysql_insert_id();
+                    mysql_query("INSERT INTO `$this->plrs_sms_content`(`complaint_id`, `is_sms`, `content`, `add_date`) VALUES ('$last_insert_id','$is_sms','$txt_content','$add_date')");
                     if (is_a($emailFunc, 'emailFunctions')) {
                         $emailFieldarry = array($cname, $cemail, $ticket_no);
                         $emailFunc->onComplaintRegistered($emailFieldarry);

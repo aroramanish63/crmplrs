@@ -65,6 +65,10 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                         <label>Email <span class="red">*</span></label>
                                         <input type="text" name="cemail" class="input-short" readonly="readonly" id="cemail" value="<?php echo (isset($detail['email'])) ? $detail['email'] : ''; ?>" />
                                     </p>
+                                    <p>
+                                        <label>City <span class="red">*</span></label>
+                                        <input type="text" name="city" class="input-short" readonly="readonly" id="city" value="<?php echo (isset($detail['city'])) ? $detail['city'] : ''; ?>" />
+                                    </p>
                                 </div>
                                 <div class="rightsection">
                                     <p>
@@ -135,6 +139,10 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                                         if (!status) {
                                                             document.getElementById('status').value = 0;
                                                         }
+                                                        else if (status) {
+                                                            document.getElementById('closebtn').style.display = 'block';
+                                                        }
+
                                                     }
                                                 }
                                             </script>
@@ -210,26 +218,30 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
 
                                 if (!$complaintFunc->isCallCentreStaff($_SESSION['uid']) && !$complaintFunc->commentUser($_SESSION['user_group'], $detail['id'])) {
                                     $commentUser = true;
-                                    ?>
-                                    <p>
-                                        <label>Transferred to <span class="red">*</span></label>
-                                        <?php
-                                        $post_array = array('btnsearch' => 1, 'u_group' => $_SESSION['transferred_to']);
-                                        $usergroup = $complaintFunc->search_in_array($userFunc->getUserGroup($_SESSION['transferred_to']), 'group_name');
-                                        $transferred_by = $complaintFunc->search_in_array($userFunc->getUserGroup($_SESSION['user_group']), 'group_name');
-                                        $group_arra = $userFunc->getUserListingBySearch($post_array);
+
+                                    if (!$complaintFunc->isSDM($_SESSION['uid'])) {
                                         ?>
-                                        <select name="transferred_to" id="transferred_to">
-                                            <option value="">Select <?php echo $usergroup; ?></option>
+                                        <p>
+                                            <label>Transferred to <span class="red">*</span></label>
                                             <?php
-                                            if (is_array($group_arra) && count($group_arra) > 0) {
-                                                foreach ($group_arra as $ugroup) {
-                                                    echo '<option value="' . $ugroup['id'] . '">' . $ugroup['name'] . '</option>';
-                                                }
-                                            }
+                                            $post_array = array('btnsearch' => 1, 'u_group' => $_SESSION['transferred_to']);
+                                            $usergroup = $complaintFunc->search_in_array($userFunc->getUserGroup($_SESSION['transferred_to']), 'group_name');
+                                            $transferred_by = $complaintFunc->search_in_array($userFunc->getUserGroup($_SESSION['user_group']), 'group_name');
+                                            $group_arra = $userFunc->getUserListingBySearch($post_array);
                                             ?>
-                                        </select>
-                                    </p>
+                                            <select name="transferred_to" id="transferred_to">
+                                                <option value="">Select <?php echo $usergroup; ?></option>
+                                                <?php
+                                                $select = '';
+                                                if (is_array($group_arra) && count($group_arra) > 0) {
+                                                    foreach ($group_arra as $ugroup) {
+                                                        echo '<option value="' . $ugroup['id'] . '">' . $ugroup['name'] . '</option>';
+                                                    }
+                                                }
+                                                ?>
+                                            </select>
+                                        </p>
+                                    <?php } ?>
                                     <p>
                                         <label>Complaint Remarks by <?php echo $transferred_by; ?><span class="red">*</span></label>
                                         <textarea name="comp_remarks" class="input-short" id="comp_remarks"><?php echo (isset($_REQUEST['comp_remarks'])) ? $_REQUEST['comp_remarks'] : ''; ?></textarea>
@@ -241,12 +253,18 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                         <?php }
                         ?>
                         <fieldset>
-                            <input class="submit-gray" type="button" value="Back" onclick="gotopage('viewComplaints');" />
+                            <input class="submit-gray" type="button" style="float:left" value="Back" onclick="gotopage('viewComplaints');" />
                             <?php
                             if (!$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
                                 if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {
                                     ?>
                                     <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                    <?php
+                                }
+                                else if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == false) && ($commentUser == false) && $complaintFunc->isCaseCoordinator($_SESSION['uid'])) {
+                                    ?>
+                                    <input id="closebtn" style="display:none;" class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                    <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
                                     <?php
                                 }
                                 else if (isset($detail['status']) && ($detail['status'] == '0') && ($detail['complaint_type'] === '2')) {

@@ -13,6 +13,7 @@ class commonFxn extends commonClass {
     protected $plrs_complaint = 'plrs_complaint';
     protected $plrs_complaint_type = 'plrs_complaint_type';
     protected $plrs_user_comment = 'plrs_user_comment';
+    protected $plrs_sms_content = 'plrs_sms_content';
     // For Previous CRM
     protected $usergrp_billperTable = 'tbl_usergroup_bill_permission';
     protected $clearanceStatusTable = 'tbl_clearance_status';
