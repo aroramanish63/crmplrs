@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><tns:TData xmlns:tns="http://www.indsoft.indianoil.co.in/WS/RequestQ">
+    <tns:HeaderData>
+        <tns:Cons_ID>7234567890987654</tns:Cons_ID>
+        <tns:CurrSchemeCode>DSC</tns:CurrSchemeCode>
+        <tns:PropSchemeCode>DNSC</tns:PropSchemeCode>
+        <tns:SchemeOpted>1</tns:SchemeOpted>
+        <tns:UserId>928066</tns:UserId>
+    </tns:HeaderData>
+    <tns:ItemData>
+        <tns:Data>
+            <tns:EqCode>M00001</tns:EqCode>
+            <tns:QuotaUsed>0</tns:QuotaUsed>
+        </tns:Data>
+    </tns:ItemData>
+</tns:TData>

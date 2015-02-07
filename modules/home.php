@@ -33,5 +33,44 @@
         <?php } ?>
         <div style="clear: both"></div>
     </div> <!-- End .grid_7 -->
+    <div class="grid_5">
+        <div class="module">
+            <h2><span>Account overview</span></h2>
+
+            <div class="module-body">
+
+                <!-- load api -->
+                <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+
+                <script type="text/javascript">
+                    //load package
+                    google.load('visualization', '1', {packages: ['corechart']});
+                </script>
+
+                <script type="text/javascript">
+                    function drawVisualization() {
+                        // Create and populate the data table.
+                        var data = google.visualization.arrayToDataTable([
+                            ['PL', 'Ratings'],
+<?php
+while ($row = $result->fetch_assoc()) {
+    extract($row);
+    echo "['{$name}', {$ratings}],";
+}
+?>
+                        ]);
+
+                        // Create and draw the visualization.
+                        new google.visualization.PieChart(document.getElementById('visualization')).
+                                draw(data, {title: "Tiobe Top Programming Languages for June 2012"});
+                    }
+
+                    google.setOnLoadCallback(drawVisualization);
+                </script>
+
+            </div>
+        </div>
+        <div style="clear:both;"></div>
+    </div> <!-- End .grid_5 -->
 
 </div>

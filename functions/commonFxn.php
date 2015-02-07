@@ -14,16 +14,22 @@ class commonFxn extends commonClass {
     protected $plrs_complaint_type = 'plrs_complaint_type';
     protected $plrs_user_comment = 'plrs_user_comment';
     protected $plrs_sms_content = 'plrs_sms_content';
+    protected $plrs_district_mstr = 'plrs_district_mstr';
+    protected $plrs_division_mstr = 'plrs_division_mstr';
+    protected $plrs_tehsil_mstr = 'plrs_tehsil_mstr';
+    protected $plrs_countries = 'plrs_countries';
+    protected $plrs_caller_type = 'plrs_caller_type';
+
     // For Previous CRM
-    protected $usergrp_billperTable = 'tbl_usergroup_bill_permission';
-    protected $clearanceStatusTable = 'tbl_clearance_status';
-    protected $clearanceBillsTable = 'tbl_clearance_bills';
-    protected $clearanceCommentTable = 'tbl_clearance_comment';
-    protected $clearanceUploadTable = 'tbl_clearance_upload';
-    protected $clearanceQuesTable = 'tbl_clearance_ques';
-    protected $clearancePaymentTable = 'tbl_clearance_payment';
-    protected $clearanceBankTable = 'tbl_clearance_bank';
-    protected $clearancePaymentModeTable = 'tbl_clearance_payment_mode';
+//    protected $usergrp_billperTable = 'tbl_usergroup_bill_permission';
+//    protected $clearanceStatusTable = 'tbl_clearance_status';
+//    protected $clearanceBillsTable = 'tbl_clearance_bills';
+//    protected $clearanceCommentTable = 'tbl_clearance_comment';
+//    protected $clearanceUploadTable = 'tbl_clearance_upload';
+//    protected $clearanceQuesTable = 'tbl_clearance_ques';
+//    protected $clearancePaymentTable = 'tbl_clearance_payment';
+//    protected $clearanceBankTable = 'tbl_clearance_bank';
+//    protected $clearancePaymentModeTable = 'tbl_clearance_payment_mode';
 
     public function __construct() {
         parent::__construct();
@@ -146,6 +152,116 @@ class commonFxn extends commonClass {
             }
             else
                 return $array[$search_key];
+        }
+    }
+
+    public function getCallerType($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_caller_type` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getCountries($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_countries` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getDivisions($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_division_mstr` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getDistricts($filter) {
+        $condition = '';
+        $returnArr = array();
+
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('division_id', $filter)) {
+                $condition .= " and `division_id` = '" . $filter['division_id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_district_mstr` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getTehsils($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('district_id', $filter)) {
+                $condition .= " and `district_id` = '" . $filter['district_id'] . "'";
+            }
+            if (array_key_exists('division_id', $filter)) {
+                $condition .= " and `division_id` = '" . $filter['division_id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_tehsil_mstr` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
         }
     }
 

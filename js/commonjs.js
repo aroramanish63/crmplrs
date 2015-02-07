@@ -110,6 +110,52 @@ function statusChange(statusid, idu, classn) {
     }
 }
 
+function getTehsilbyAjax(districtid, divid, classn) {
+    if (districtid != '' && divid != '' && classn != '') {
+        var returnstring = '<option value="">Select Tehsil</option>';
+        var sendstring = {
+            page: 'ajaxFunctions',
+            ajx: 'Yes',
+            func_name: 'getTehsils',
+            class: classn,
+            id: districtid
+        };
+        $.ajax({
+            type: "POST",
+            url: "index.php",
+            data: sendstring,
+            dataType: 'json',
+            success: function (data) {
+                if (typeof (data) === 'object') {
+                    $(data).each(function (i, val) {
+                        returnstring += '<option value="' + val['id'] + '">' + val['tehsil_name'] + '</option>';
+                    });
+                    console.log(returnstring);
+                    $('#' + divid).html(returnstring);
+                }
+            }
+        });
+    }
+}
+
+/**
+ * Comment
+ */
+function getCallercountries(callertypeid, elementid) {
+    if (callertypeid === '') {
+        $('#' + elementid).attr('disabled', 'disabled');
+    }
+    if (callertypeid !== '' && elementid !== '') {
+        if (callertypeid === '1') {
+            $('#' + elementid).val('99');
+            $('#country_id').val('99');
+        }
+        else {
+            $('#' + elementid).val('');
+            $('#' + elementid).removeAttr('disabled');
+        }
+    }
+}
 /*
  * Ajax Requests Functions End Here
  * @type XMLHttpRequest

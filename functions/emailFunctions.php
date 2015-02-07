@@ -108,51 +108,20 @@ class emailFunctions extends commonFxn {
         }
     }
 
-    public function verifierMessage() {
-        $returnString = '';
-        $returnString .= '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">'
-                . 'Hi,<br><br>'
-                . 'It is to inform you that, you received a request in clearance system. Please do the needful as soon as possible.'
-                . '<br><br>'
-                . '<br><br>With Regards,<br>Admin<br>';
-
-        return $returnString;
-    }
-
-    public function approverMessage() {
-        $returnString = '';
-        $returnString .= '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">'
-                . 'Hi,<br><br>'
-                . 'It is to inform you that, you received a request in clearance system. Please do the needful as soon as possible.'
-                . '<br><br>'
-                . '<br><br>With Regards,<br>Verifier<br>';
-
-        return $returnString;
-    }
-
-    public function financeMessage() {
-        $returnString = '';
-        $returnString .= '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">'
-                . 'Hi,<br><br>'
-                . 'It is to inform you that, you received a request in clearance system. Please do the needful as soon as possible.'
-                . '<br><br>'
-                . '<br><br>With Regards,<br>Approver<br>';
-
-        return $returnString;
-    }
-
     public function onComplaintRegistered($fields) {
         if (is_array($fields) && count($fields) > 0) {
             $message = '';
             $message .= '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">'
-                    . 'Hi,' . $fields[0] . '<br><br>'
-                    . 'We have successfully registered your complaint. Please find details below:'
+                    . 'Dear ' . $fields['cname'] . ',<br><br>'
+                    . 'Thanks you for contacting Punjab Land Records Society.'
                     . '<br><br>'
-                    . 'Name:' . $fields[0] . '<br/>'
-                    . 'Email:' . $fields[1] . '<br/>'
-                    . 'Complaint Ticket No.:' . $fields[2] . '<br/>'
-                    . '<br><br>With Regards,<br>PLRS Team<br>';
-            $to = $fields[1];
+                    . 'Your support ticket number is ' . $fields['ticket_no'] . '<br/>';
+            if (array_key_exists('txt_content', $fields)) {
+                $message .= 'Kindly find below the response regarding your query:';
+                $message .= $fields['txt_content'];
+            }
+            $message .= '<br><br>Sincerely,<br>PLRS Customer Care Team<br>';
+            $to = $fields['cemail'];
             $subj = "Complaint Registered Successfully";
             $this->sendEmail($to, $subj, $message);
         }
