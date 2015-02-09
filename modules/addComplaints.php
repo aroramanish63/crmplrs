@@ -144,7 +144,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                                     <option value="">Select Tehsil</option>
                                     <?php
                                     $selected = '';
-                                    $tehsil_list = $complaintFunc->getDistricts();
+                                    $tehsil_list = $complaintFunc->getTehsils();
                                     if (is_array($tehsil_list) && count($tehsil_list) > 0) {
                                         foreach ($tehsil_list as $tehsil) {
                                             if (isset($_REQUEST['tehsil']) && ($tehsil['id'] === $_REQUEST['tehsil'])) {
@@ -153,7 +153,7 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                                             else {
                                                 $selected = '';
                                             }
-                                            echo '<option value="' . $tehsil['id'] . '" ' . $selected . '>' . $tehsil['district_name'] . '</option>';
+                                            echo '<option value="' . $tehsil['id'] . '" ' . $selected . '>' . $tehsil['tehsil_name'] . '</option>';
                                         }
                                     }
                                     ?>

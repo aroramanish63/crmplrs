@@ -119,7 +119,6 @@ class complaintFunctions extends commonFxn {
         if (!isset($_POST['auserSubmit'])) {
             return false;
         }
-
         $errors = array();
         if (!isset($_POST['caller']) && $_POST['caller'] == '') {
             $errors['caller'] = 'Caller field required.';
@@ -154,13 +153,15 @@ class complaintFunctions extends commonFxn {
                 $errors['contactno'] = 'Valid contact no. required.';
             }
         }
-
-        if (!isset($_POST['district']) && $_POST['district'] == '') {
-            $errors['district'] = 'District field required.';
+        if (array_key_exists('district', $_POST)) {
+            if (!isset($_POST['district']) && $_POST['district'] == '') {
+                $errors['district'] = 'District field required.';
+            }
         }
-
-        if (!isset($_POST['tehsil']) && $_POST['tehsil'] == '') {
-            $errors['tehsil'] = 'Tehsil field required.';
+        if (array_key_exists('tehsil', $_POST)) {
+            if (!isset($_POST['tehsil']) && $_POST['tehsil'] == '') {
+                $errors['tehsil'] = 'Tehsil field required.';
+            }
         }
 
         if (!isset($_POST['caddress']) && $_POST['caddress'] == '') {
@@ -286,7 +287,7 @@ class complaintFunctions extends commonFxn {
                         return true;
                     }
                 }
-                else if (array_key_exists('comp_remarks', $_POST) && ($_POST['comp_type'] == '2')) {
+                else if (array_key_exists('comp_remarks', $_POST) && ($_POST['comp_type'] == '2' || $_POST['comp_type'] == '3' || $_POST['comp_type'] == '4')) {
                     if (isset($_POST['comp_remarks']) && !empty($_POST['comp_remarks'])) {
                         mysql_query("INSERT INTO `$this->plrs_user_comment`(`created_by`, `complaint_id`, `remarks`, `is_open`, `add_date`) VALUES ('$created_by','$comp_id','$remarks','1','$add_date')") or die(mysql_error());
                         $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='1' where `id` = '$comp_id'") or die(mysql_error());
@@ -295,7 +296,12 @@ class complaintFunctions extends commonFxn {
                             $emailFieldarry = array($cname, $cemail, $complaintno, $remarks);
                             $emailFunc->onFeedback($emailFieldarry);
                         }
-                        $this->setSessionMessage('Feedback updated successfully.', 'success');
+                        if ($_POST['comp_type'] == '2') {
+                            $this->setSessionMessage('Feedback updated successfully.', 'success');
+                        }
+                        else if ($_POST['comp_type'] == '3' || $_POST['comp_type'] == '4') {
+                            $this->setSessionMessage('Enquiry updated successfully.', 'success');
+                        }
                         return true;
                     }
                     else {

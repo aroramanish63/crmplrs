@@ -162,6 +162,24 @@ function getCallercountries(callertypeid, elementid) {
  */
 
 /**
+ * function for enable transfer button
+ */
+function enableTransfer(val) {
+    if (val !== '') {
+        if (val === '1') {
+            document.getElementById('transferdiv').style.display = 'none';
+            document.getElementById('status').value = val;
+            document.getElementById('statusselect').value = val;
+        }
+        else if (val === '2') {
+            document.getElementById('transferdiv').style.display = 'block';
+            document.getElementById('status').value = val;
+            document.getElementById('statusselect').value = val;
+        }
+    }
+}
+
+/**
  * Function for add category textbox using javascript
  */
 function addmore_category(textboxid) {
@@ -301,6 +319,25 @@ function alphaOnly(id) {
         return false;
 }
 
+/**
+ * FUnction for validate enquiry form
+ */
+function validateEnquiry() {
+    var action = document.getElementById('action').checked;
+    var comp_remarks = document.getElementById('comp_remarks');
+    if (!action) {
+        alert('Please select action.');
+        action.focus();
+        return false;
+    }
+
+    if (comp_remarks.value == '' || comp_remarks.value.replace(/\s+$/, '') == '') {
+        alert('Please enter remarks.');
+        comp_remarks.focus();
+        return false;
+    }
+    window.abillfrm.submit();
+}
 
 /**
  * validate complaint form

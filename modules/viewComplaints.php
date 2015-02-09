@@ -92,7 +92,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                             $i = 1;
                             foreach ($listingarr as $list) {
                                 if (($complaintFunc->isCounsellor($_SESSION['uid']) || $complaintFunc->isStateCoordinator($_SESSION['uid'])) && ($list['status'] == 0)) {
-                                    if ($complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['complaint_type'] !== '2' && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']) || ($list['counseller_stateco_id'] == 0))) {
+                                    if ($complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['complaint_type'] !== '2' && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']))) {
                                         echo '<tr>';
                                         echo '<td>' . $i . '</td>';
                                         echo '<td>' . $list['ticket_no'] . '</td>';
@@ -106,7 +106,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '</tr>';
                                         $i++;
                                     }
-                                    else if (!$complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']) || ($list['counseller_stateco_id'] == 0))) {
+                                    else if (!$complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']) || $list['complaint_type'] == '2')) {
                                         echo '<tr>';
                                         echo '<td>' . $i . '</td>';
                                         echo '<td>' . $list['ticket_no'] . '</td>';

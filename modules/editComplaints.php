@@ -54,6 +54,54 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                     ?>
                     <form action="" onsubmit="return validatecomplaintfrm();" method="post" name="abillfrm" id="abillfrm">
                         <fieldset>
+                            <legend><h3>Caller Information</h3></legend>
+                            <p>
+                                <label>Select Caller <span class="red">*</span></label>
+                                <select id="caller" class="input-short" disabled="disabled">
+                                    <option value="">Select Caller</option>
+                                    <?php
+                                    $selected = '';
+                                    $caller_type = $complaintFunc->getCallerType();
+                                    if (is_array($caller_type) && count($caller_type) > 0) {
+                                        foreach ($caller_type as $callers) {
+                                            if (isset($detail['caller_type']) && ($callers['id'] === $detail['caller_type'])) {
+                                                $selected = 'selected="selected"';
+                                            }
+                                            else {
+                                                $selected = '';
+                                            }
+                                            echo '<option value="' . $callers['id'] . '" ' . $selected . '>' . $callers['caller_type'] . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                                <input type="hidden" name="caller" value="<?php echo $detail['caller_type']; ?>" />
+                            </p>
+                            <p>
+                                <label>Select Country <span class="red">*</span></label>
+                                <select name="country" disabled="disabled" id="country" class="input-short" onchange="document.getElementById('country_id').value = this.value;">
+                                    <option value="">Select Country</option>
+                                    <?php
+                                    $selected = '';
+                                    $countries = $complaintFunc->getCountries();
+                                    if (is_array($countries) && count($countries) > 0) {
+                                        foreach ($countries as $country) {
+
+                                            if (isset($detail['country']) && ($country['id'] === $detail ['country'] )) {
+                                                $selected = 'selected="selected"';
+                                            }
+                                            else {
+                                                $selected = '';
+                                            }
+                                            echo '<option value="' . $country['id'] . '" ' . $selected . '>' . $country ['country_name'] . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                                <input type="hidden" name="country_id" id="country_id" value="<?php echo $detail['country']; ?>" />
+                            </p>
+                        </fieldset>
+                        <fieldset>
                             <h3>Personal Information</h3>
                             <div class="mainsection">
                                 <div class="leftsection">
@@ -66,14 +114,56 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                         <input type="text" name="cemail" class="input-short" readonly="readonly" id="cemail" value="<?php echo (isset($detail['email'])) ? $detail['email'] : ''; ?>" />
                                     </p>
                                     <p>
+                                        <label>Contact No. <span class="red">*</span></label>
+                                        <input type="text" name="contactno" class="input-short" maxlength="10" readonly="readonly" onkeypress="return checknum(event);" id="contactno" value="<?php echo (isset($detail['contactno'])) ? $detail['contactno'] : ''; ?>" />
+                                    </p>
+                                    <p>
                                         <label>City <span class="red">*</span></label>
                                         <input type="text" name="city" class="input-short" readonly="readonly" id="city" value="<?php echo (isset($detail['city'])) ? $detail['city'] : ''; ?>" />
                                     </p>
                                 </div>
                                 <div class="rightsection">
                                     <p>
-                                        <label>Contact No. <span class="red">*</span></label>
-                                        <input type="text" name="contactno" class="input-short" maxlength="10" readonly="readonly" onkeypress="return checknum(event);" id="contactno" value="<?php echo (isset($detail['contactno'])) ? $detail['contactno'] : ''; ?>" />
+                                        <label>District <span class="red">*</span></label>
+                                        <select name="district" id="district" class="input-short" disabled="disabled" onchange="getTehsilbyAjax(this.value, 'tehsil', '<?php echo get_class($complaintFunc); ?>');">
+                                            <option value="">Select District</option>
+                                            <?php
+                                            $selected = '';
+                                            $district_list = $complaintFunc->getDistricts();
+                                            if (is_array($district_list) && count($district_list) > 0) {
+                                                foreach ($district_list as $district) {
+                                                    if (isset($detail['district']) && ($district['id'] === $detail['district'])) {
+                                                        $selected = 'selected="selected"';
+                                                    }
+                                                    else {
+                                                        $selected = '';
+                                                    }
+                                                    echo '<option value="' . $district['id'] . '" ' . $selected . '>' . $district['district_name'] . '</option>';
+                                                }
+                                            }
+                                            ?>
+                                        </select>
+                                    </p>
+                                    <p>
+                                        <label>Tehsil <span class="red">*</span></label>
+                                        <select name="tehsil" id="tehsil" class="input-short" disabled="disabled">
+                                            <option value="">Select Tehsil</option>
+                                            <?php
+                                            $selected = '';
+                                            $tehsil_list = $complaintFunc->getTehsils(array('district_id' => $detail['district']));
+                                            if (is_array($tehsil_list) && count($tehsil_list) > 0) {
+                                                foreach ($tehsil_list as $tehsil) {
+                                                    if (isset($detail['tehsil']) && ($tehsil['id'] === $detail['tehsil'])) {
+                                                        $selected = 'selected="selected"';
+                                                    }
+                                                    else {
+                                                        $selected = '';
+                                                    }
+                                                    echo '<option value="' . $tehsil['id'] . '" ' . $selected . '>' . $tehsil['tehsil_name'] . '</option>';
+                                                }
+                                            }
+                                            ?>
+                                        </select>
                                     </p>
                                     <p>
                                         <label>Address <span class="red">*</span></label>
@@ -127,38 +217,42 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                     </p>
                                     <?php
                                     if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] !== '2')) {
-                                        if ($complaintFunc->isCaseCoordinator($_SESSION['uid'])) {
-                                            ?>
-                                            <script type="text/javascript">
-                                                /**
-                                                 * function for close the complaint
-                                                 */
-                                                function complaintStatus(val) {
-                                                    if (val !== '0') {
-                                                        var status = confirm('Are you sure you want to close Complaint ?');
-                                                        if (!status) {
-                                                            document.getElementById('status').value = 0;
-                                                        }
-                                                        else if (status) {
-                                                            document.getElementById('closebtn').style.display = 'block';
-                                                        }
-
+//                                        if (!$complaintFunc->isCaseCoordinator($_SESSION['uid'])) {
+                                        ?>
+                                        <script type="text/javascript">
+                                            /**
+                                             * function for close the complaint
+                                             */
+                                            function complaintStatus(val) {
+                                                if (val !== '0') {
+                                                    var status = confirm('Are you sure you want to close Complaint ?');
+                                                    if (!status) {
+                                                        document.getElementById('status').value = 0;
                                                     }
+                                                    else if (status) {
+                                                        document.getElementById('closebtn').style.display = 'block';
+                                                    }
+
                                                 }
-                                            </script>
-                                            <p>
-                                                <label>Status <span class="red">*</span></label>
-                                                <select name="status" id="status" onchange="complaintStatus(this.value);" class="input-short" <?php echo (isset($detail['status']) && ($detail['status'] == '1')) ? 'disabled="disabled"' : ''; ?>>
-                                                    <option value="">Select Status</option>
-                                                    <option value="0" <?php echo (isset($detail['status']) && ($detail['status'] == '0')) ? 'selected="selected"' : ''; ?>>Open</option>
-                                                    <option value="1" <?php echo (isset($detail['status']) && ($detail['status'] == '1')) ? 'selected="selected"' : ''; ?>>Close</option>
-                                                </select>
-                                            </p>
-                                            <?php
-                                        }
-                                        else {
-                                            echo '<input type="hidden" name="status" id="status" value="0" />';
-                                        }
+                                            }
+                                        </script>
+                                        <p>
+                                            <label>Status <span class="red">*</span></label>
+                                            <select name="statusselect" id="statusselect" onchange="complaintStatus(this.value);" disabled="disabled" class="input-short" <?php echo (isset($detail['status']) && ($detail['status'] == '1')) ? 'disabled="disabled"' : ''; ?>>
+                                                <option value="">Select Status</option>
+                                                <option value="0" <?php echo (isset($detail['status']) && ($detail['status'] == '0')) ? 'selected="selected"' : ''; ?>>Open</option>
+                                                <option value="1" <?php echo (isset($detail['status']) && ($detail['status'] == '1')) ? 'selected="selected"' : ''; ?>>Close</option>
+                                                <?php if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] === '2')) { ?>
+                                                    <option value="2" <?php echo (isset($detail['status']) && ($detail['status'] == '2')) ? 'selected="selected"' : ''; ?>>Forward</option>
+                                                <?php } ?>
+                                            </select>
+                                            <input type="hidden" name="status" id="status" value="<?php echo $detail['status']; ?>" />
+                                        </p>
+                                        <?php
+//                                        }
+//                                        else {
+//                                            echo '<input type="hidden" name="status" id="status" value="0" />';
+//                                        }
                                     }
                                     ?>
                                 </div>
@@ -171,6 +265,23 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                         <?php if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] === '2')) { ?>
                             <fieldset>
                                 <h3>Remarks</h3>
+                                <p>
+                                    <label>Complaint Remarks <span class="red">*</span></label>
+                                    <textarea name="comp_remarks" <?php echo (is_array($plrsRemarks) && count($plrsRemarks) > 0) ? 'readonly="readonly"' : ''; ?>class="input-short" id="comp_remarks"><?php echo (isset($_REQUEST['comp_remarks'])) ? $_REQUEST['comp_remarks'] : ((is_array($plrsRemarks) && count($plrsRemarks) > 0) ? $complaintFunc->search_in_array($plrsRemarks, 'remarks') : ''); ?></textarea>
+                                    <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
+                                </p>
+                            </fieldset>
+                            <?php
+                        }
+                        else if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] === '3' || $detail['complaint_type'] === '4')) {
+                            ?>
+                            <fieldset>
+                                <h3>Remarks</h3>
+                                <p>
+                                    <label>Select Action <span class="red">*</span></label>
+                                    <input type="radio" <?php echo ($detail['status'] === '1') ? 'checked="checked"' : ''; ?> name="action" id="action" value="1" onclick="document.getElementById('status').value = this.value;
+                                                        document.getElementById('statusselect').value = this.value;" /> Close
+                                </p>
                                 <p>
                                     <label>Complaint Remarks <span class="red">*</span></label>
                                     <textarea name="comp_remarks" <?php echo (is_array($plrsRemarks) && count($plrsRemarks) > 0) ? 'readonly="readonly"' : ''; ?>class="input-short" id="comp_remarks"><?php echo (isset($_REQUEST['comp_remarks'])) ? $_REQUEST['comp_remarks'] : ((is_array($plrsRemarks) && count($plrsRemarks) > 0) ? $complaintFunc->search_in_array($plrsRemarks, 'remarks') : ''); ?></textarea>
@@ -216,12 +327,18 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
 
 
 
-                                if (!$complaintFunc->isCallCentreStaff($_SESSION['uid']) && !$complaintFunc->commentUser($_SESSION['user_group'], $detail['id'])) {
+                                if (!$complaintFunc->commentUser($_SESSION['user_group'], $detail['id'])) {
                                     $commentUser = true;
 
                                     if (!$complaintFunc->isSDM($_SESSION['uid'])) {
                                         ?>
                                         <p>
+                                            <label>Select Action <span class="red">*</span></label>
+                                            <input type="radio" name="action" id="action" value="1" onclick="enableTransfer(this.value);" /> Close
+                                            &nbsp;
+                                            <input type="radio" name="action" id="forward" value="2" onclick="enableTransfer(this.value);" /> Forward
+                                        </p>
+                                        <p id="transferdiv" style="display:none;">
                                             <label>Transferred to <span class="red">*</span></label>
                                             <?php
                                             $post_array = array('btnsearch' => 1, 'u_group' => $_SESSION['transferred_to']);
@@ -255,24 +372,30 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                         <fieldset>
                             <input class="submit-gray" type="button" style="float:left" value="Back" onclick="gotopage('viewComplaints');" />
                             <?php
-                            if (!$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
-                                if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {
-                                    ?>
-                                    <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
-                                    <?php
-                                }
-                                else if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == false) && ($commentUser == false) && $complaintFunc->isCaseCoordinator($_SESSION['uid'])) {
-                                    ?>
-                                    <input id="closebtn" style="display:none;" class="submit-green" type="submit" name="auserSubmit" value="Submit" />
-                                    <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
-                                    <?php
-                                }
-                                else if (isset($detail['status']) && ($detail['status'] == '0') && ($detail['complaint_type'] === '2')) {
-                                    ?>
-                                    <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
-                                    <?php
-                                }
+//                            if (!$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
+                            if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {
+                                ?>
+                                <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                <?php
                             }
+                            else if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == false)) {
+                                ?>
+                                <input id="closebtn" style="display:none;" class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
+                                <?php
+                            }
+                            else if (isset($detail['status']) && ($detail['status'] == '0') && ($detail['complaint_type'] === '2')) {
+                                ?>
+                                <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                <?php
+                            }
+                            if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '3')) {
+                                ?>
+                                <input type="hidden" name="auserSubmit" value="1" />
+                                <input class="submit-green" type="button" onclick="validateEnquiry();" value="Submit" />
+                                <?php
+                            }
+//                            }
                             ?>
                             <input type="hidden" name="compidu" id="compidu" value="<?php echo $detail['id']; ?>" />
                         </fieldset>
