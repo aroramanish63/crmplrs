@@ -1,7 +1,7 @@
 <?php
 
-error_reporting(0);
-ini_set('display_errors', 0);
+error_reporting(1);
+ini_set('display_errors', 1);
 session_start();
 //define('SITE_URL', 'http://49.50.76.128/plrscrm/');
 define('SITE_URL', 'http://localhost/plrscrm/');

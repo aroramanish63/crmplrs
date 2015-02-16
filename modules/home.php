@@ -15,19 +15,19 @@
 
         <?php if (isset($_SESSION['role']['viewComplaints']) || isset($_SESSION['role']['addComplaints']) || isset($_SESSION['role']['editComplaints'])) { ?>
             <a href="<?php echo SITE_URL ?>?page=viewComplaints" class="dashboard-module">
-                <img src="images/Crystal_Clear_file.gif" width="64" height="64" alt="edit" />
+                <img src="images/Crystal_Clear_file.gif" width="64" height="64" alt="Complaint Management" />
                 <span>Complaint <br/> Management</span>
             </a>
         <?php } ?>
         <?php if (isset($_SESSION['role']['exportreport'])) { ?>
             <a href="<?php echo SITE_URL ?>?page=exportreport" class="dashboard-module">
-                <img src="images/Crystal_Clear_stats.gif" width="64" height="64" alt="edit" />
+                <img src="images/Crystal_Clear_stats.gif" width="64" height="64" alt="Reports" />
                 <span>Reports</span>
             </a>
         <?php } ?>
         <?php if (isset($_SESSION['role']['userProfile'])) { ?>
             <a href="<?php echo SITE_URL ?>?page=userProfile" class="dashboard-module">
-                <img src="images/Crystal_Clear_settings.gif" width="64" height="64" alt="edit" />
+                <img src="images/Crystal_Clear_settings.gif" width="64" height="64" alt="Profile" />
                 <span>Profile</span>
             </a>
         <?php } ?>
@@ -35,39 +35,26 @@
     </div> <!-- End .grid_7 -->
     <div class="grid_5">
         <div class="module">
-            <h2><span>Account overview</span></h2>
+            <h2><span>Complaints overview</span></h2>
 
             <div class="module-body">
-
-                <!-- load api -->
-                <script type="text/javascript" src="http://www.google.com/jsapi"></script>
-
-                <script type="text/javascript">
-                    //load package
-                    google.load('visualization', '1', {packages: ['corechart']});
-                </script>
-
-                <script type="text/javascript">
-                    function drawVisualization() {
-                        // Create and populate the data table.
-                        var data = google.visualization.arrayToDataTable([
-                            ['PL', 'Ratings'],
-<?php
-while ($row = $result->fetch_assoc()) {
-    extract($row);
-    echo "['{$name}', {$ratings}],";
-}
-?>
-                        ]);
-
-                        // Create and draw the visualization.
-                        new google.visualization.PieChart(document.getElementById('visualization')).
-                                draw(data, {title: "Tiobe Top Programming Languages for June 2012"});
+                <?php
+                $sql = "SELECT pct.complaint_type,count(pc.id) as cnt FROM `plrs_complaint` as pc join plrs_complaint_type as pct on pct.id = pc.complaint_type group by pc.complaint_type";
+                $complaint_type = $commonObj->query($sql);
+                if (mysql_num_rows($complaint_type) > 0) {
+                    require BASE_PATH . "libchart/libchart/classes/libchart.php";
+                    $chart = new PieChart(450, 250);
+                    $dataSet = new XYDataSet();
+                    while ($row = mysql_fetch_assoc($complaint_type)) {
+                        $dataSet->addPoint(new Point($row['complaint_type'] . ' (' . $row['cnt'] . ')', $row['cnt']));
                     }
+                    $chart->setDataSet($dataSet);
 
-                    google.setOnLoadCallback(drawVisualization);
-                </script>
-
+                    $chart->setTitle("User Complaints");
+                    $chart->render(BASE_PATH . "libchart/demo/generated/demo3.png");
+                    ?>
+                    <img alt="Pie chart"  src="./libchart/demo/generated/demo3.png" style="border: 1px solid gray;"/>
+                <?php } ?>
             </div>
         </div>
         <div style="clear:both;"></div>

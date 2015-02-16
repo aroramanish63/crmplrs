@@ -41,6 +41,22 @@ class complaintFunctions extends commonFxn {
             $condition .= " and complaint_type='" . $this->real_escape_string($_POST['statusclearance']) . "'";
         }
 
+        if (isset($_POST['caller']) && $_POST['caller'] !== '') {
+            $condition .= " and caller_type='" . $this->real_escape_string($_POST['caller']) . "'";
+        }
+
+        if (isset($_POST['district']) && $_POST['district'] !== '') {
+            $condition .= " and district='" . $this->real_escape_string($_POST['district']) . "'";
+        }
+
+        if (isset($_POST['tehsil']) && $_POST['tehsil'] !== '') {
+            $condition .= " and tehsil='" . $this->real_escape_string($_POST['tehsil']) . "'";
+        }
+
+        if (isset($_POST['subtehsil']) && $_POST['subtehsil'] !== '') {
+            $condition .= " and sub_tehsil='" . $this->real_escape_string($_POST['subtehsil']) . "'";
+        }
+
         if (isset($_POST['complaintno']) && $_POST['complaintno'] !== '') {
             $condition .= " and ticket_no='" . $this->real_escape_string($_POST['complaintno']) . "'";
         }
@@ -119,6 +135,7 @@ class complaintFunctions extends commonFxn {
         if (!isset($_POST['auserSubmit'])) {
             return false;
         }
+
         $errors = array();
         if (!isset($_POST['caller']) && $_POST['caller'] == '') {
             $errors['caller'] = 'Caller field required.';
@@ -141,10 +158,6 @@ class complaintFunctions extends commonFxn {
             }
         }
 
-        if (!isset($_POST['city']) && $_POST['city'] == '') {
-            $errors['city'] = 'City field required.';
-        }
-
         if (!isset($_POST['contactno']) && $_POST['contactno'] == '') {
             $errors['contactno'] = 'Contact No. field required.';
         }
@@ -153,6 +166,15 @@ class complaintFunctions extends commonFxn {
                 $errors['contactno'] = 'Valid contact no. required.';
             }
         }
+
+        if (!isset($_POST['caddress']) && $_POST['caddress'] == '') {
+            $errors['caddress'] = 'Address field required.';
+        }
+
+        if (!isset($_POST['city']) && $_POST['city'] == '') {
+            $errors['city'] = 'City field required.';
+        }
+
         if (array_key_exists('district', $_POST)) {
             if (!isset($_POST['district']) && $_POST['district'] == '') {
                 $errors['district'] = 'District field required.';
@@ -163,9 +185,10 @@ class complaintFunctions extends commonFxn {
                 $errors['tehsil'] = 'Tehsil field required.';
             }
         }
-
-        if (!isset($_POST['caddress']) && $_POST['caddress'] == '') {
-            $errors['caddress'] = 'Address field required.';
+        if (array_key_exists('subtehsil', $_POST)) {
+            if (!isset($_POST['subtehsil']) && $_POST['subtehsil'] == '') {
+                $errors['subtehsil'] = 'Sub Tehsil field required.';
+            }
         }
 
         if (array_key_exists('complainttype', $_POST)) {
@@ -213,6 +236,7 @@ class complaintFunctions extends commonFxn {
             $contactno = $this->real_escape_string($_POST['contactno']);
             $district = $this->real_escape_string($_POST['district']);
             $tehsil = $this->real_escape_string($_POST['tehsil']);
+            $subtehsil = $this->real_escape_string($_POST['subtehsil']);
             $caddress = $this->real_escape_string($_POST['caddress']);
             if (array_key_exists('complainttype', $_POST)) {
                 $complainttype = $this->real_escape_string($_POST['complainttype']);
@@ -243,7 +267,7 @@ class complaintFunctions extends commonFxn {
 
                     $status = $this->real_escape_string($_POST['status']);
 
-                    $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='$status' where `id` = '$comp_id'") or die(mysql_error());
+                    $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='$status',`closed_by`='$created_by',`update_date`='$add_date' where `id` = '$comp_id'") or die(mysql_error());
 
                     if (is_a($emailFunc, 'emailFunctions')) {
                         $emailFieldarry = array($cname, $cemail, $complaintno);
@@ -252,29 +276,37 @@ class complaintFunctions extends commonFxn {
                     $this->setSessionMessage('Complaint closed successfully.', 'success');
                     return true;
                 }
-                else if (isset($_POST['status']) && ($_POST['status'] == '0') && ($_POST['comp_type'] == '1')) {
+                else if (isset($_POST['status']) && ($_POST['status'] == '2' || $_POST['status'] == '3' || $_POST['status'] == '4') && ($_POST['comp_type'] == '1')) {
                     if (array_key_exists('comp_remarks', $_POST)) {
                         if (isset($_POST['comp_remarks']) && !empty($_POST['comp_remarks'])) {
                             $qry_str = '';
                             mysql_query("INSERT INTO `$this->plrs_user_comment`(`created_by`, `user_group`, `complaint_id`, `remarks`, `is_open`, `add_date`) VALUES ('$created_by','$user_group','$comp_id','$remarks','" . $_POST['status'] . "','$add_date')") or die(mysql_error());
-                            if (isset($_POST['transferred_by_group']) && isset($_POST['transferred_to']) && ($_POST['transferred_by_group'] == 'Counsellor')) {
-                                $is_counseller = 1;
+
+                            if (isset($_SESSION['transferred_to']) && isset($_POST['transferred_by_group']) && isset($_POST['transferred_to'])) {
+                                $transferredtogrouparray = $this->select('tbl_usergroup', 'group_name', array('id' => $_SESSION['transferred_to']));
+                                if (is_array($transferredtogrouparray) && count($transferredtogrouparray) > 0) {
+                                    foreach ($transferredtogrouparray as $group_name) {
+                                        $transferGroupname = $group_name['group_name'];
+                                    }
+                                }
                                 $transferred_to = $this->real_escape_string($_POST['transferred_to']);
-                                $qry_str = ", `counseller_stateco_id` = '$created_by', `case_cordinator_id` = '$transferred_to', `is_counseller` = '$is_counseller'";
-                            }
-                            else if (isset($_POST['transferred_by_group']) && ($_POST['transferred_by_group'] == 'State Co-ordinator')) {
-                                $is_counseller = 2;
-                                $transferred_to = $this->real_escape_string($_POST['transferred_to']);
-                                $qry_str = ", `counseller_stateco_id` = '$created_by', `case_cordinator_id` = '$transferred_to', `is_counseller` = '$is_counseller'";
-                            }
-                            else if (isset($_POST['transferred_by_group']) && ($_POST['transferred_by_group'] == 'Case Co-ordinator')) {
-                                $transferred_to = $this->real_escape_string($_POST['transferred_to']);
-                                $qry_str = ", `case_cordinator_id` = '$created_by', `sdm_id` = '$transferred_to'";
+                                if ($_POST['transferred_by_group'] == 'Call Centre Staff' && $transferGroupname == 'Counsellor') {
+                                    $qry_str = ", `callcenter_id` = '$created_by', `counseller_stateco_id` = '$transferred_to', `is_counseller` = '1'";
+                                }
+                                else if ($_POST['transferred_by_group'] == 'Call Centre Staff' && $transferGroupname == 'State Co-ordinator') {
+                                    $qry_str = ", `callcenter_id` = '$created_by', `counseller_stateco_id` = '$transferred_to', `is_counseller` = '2'";
+                                }
+                                else if ($_POST['transferred_by_group'] == 'Counsellor' && $transferGroupname == 'SDM') {
+                                    $qry_str = ", `counseller_stateco_id` = '$created_by', `sdm_id` = '$transferred_to'";
+                                }
+                                else if ($_POST['transferred_by_group'] == 'State Co-ordinator' && $transferGroupname == 'SDM') {
+                                    $qry_str = ", `counseller_stateco_id` = '$created_by', `sdm_id` = '$transferred_to'";
+                                }
                             }
 
-                            $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='0' $qry_str where `id` = '$comp_id'") or die(mysql_error());
+                            $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='" . $_POST['status'] . "' $qry_str where `id` = '$comp_id'") or die(mysql_error());
 
-                            $this->setSessionMessage('Complaint updated successfully.', 'success');
+                            $this->setSessionMessage('Complaint forwarded successfully.', 'success');
                             return true;
                         }
                         else {
@@ -315,7 +347,7 @@ class complaintFunctions extends commonFxn {
                 }
             }
             else {
-                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `city`, `district`, `tehsil`, `country`, `complaint_type`, `caller_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$city','$district','$tehsil','$country_id','$complainttype','$caller','$ticket_no','$cdescription','$created_by','$add_date','0')") or die(mysql_error());
+                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `city`, `district`, `tehsil`, `sub_tehsil`, `country`, `complaint_type`, `caller_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$city','$district','$tehsil','$subtehsil','$country_id','$complainttype','$caller','$ticket_no','$cdescription','$created_by','$add_date','0')") or die(mysql_error());
                 if ($insertQry) {
                     $emailFieldarry = array('cname' => $cname, 'cemail' => $cemail, 'ticket_no' => $ticket_no);
                     if ($is_sms !== '0' || $is_email !== '0') {
@@ -326,7 +358,7 @@ class complaintFunctions extends commonFxn {
                     if (is_a($emailFunc, 'emailFunctions')) {
                         $emailFunc->onComplaintRegistered($emailFieldarry);
                     }
-                    $this->setSessionMessage('Complaint added successfully', 'success');
+                    $this->setSessionMessage('Complaint added successfully with Complaint No.' . $ticket_no, 'success');
                     return true;
                 }
             }
@@ -393,6 +425,68 @@ class complaintFunctions extends commonFxn {
                 return false;
             }
         }
+    }
+
+    public function exportReport($dataArray) {
+        if (is_array($dataArray) && count($dataArray) > 0) {
+            $file_ending = "xls";
+            header('Content-Type: application/vnd.ms-excel');
+            header('Content-Disposition: attachment;filename="ComplaintsReport.xls"');
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header('Pragma: public'); // HTTP/1.0
+
+            $exportString = '';
+
+            $exportString .= '<table border="1px solid">
+                <thead>
+                    <tr>
+                        <th style="width:5%">S.No.</th>
+                        <th style="width:10%">Complaint No.</th>
+                        <th style="width:10%">Caller</th>
+                        <th style="width:10%">Complaint Type</th>
+                        <th style="width:10%">Name</th>
+                        <th style="width:10%">Email</th>
+                        <th style="width:10%">Contact No.</th>
+                        <th style="width:10%">District</th>
+                        <th style="width:10%">Tehsil</th>
+                        <th style="width:10%">Sub Tehsil</th>
+                        <th style="width:10%">Created By</th>
+                        <th style="width:15%">Create Date</th>
+                        <th style="width:10%">Status</th>
+                    </tr>
+                </thead>
+                <tbody>';
+
+            $userFunc = $this->load_class_object('userFunctions');
+
+
+            $i = 1;
+            foreach ($dataArray as $list) {
+
+                $exportString .= '<tr>';
+                $exportString .= '<td>' . $i . '</td>';
+                $exportString .= '<td>' . $list['ticket_no'] . '</td>';
+                $exportString .= '<td>' . $this->search_in_array($this->getCallerType(array('id' => $list['caller_type'])), 'caller_type') . '</td>';
+                $exportString .= '<td>' . $this->search_in_array($this->getPLRSComplaintType($list['complaint_type']), 'complaint_type') . '</td>';
+                $exportString .= '<td>' . $list['name'] . '</td>';
+                $exportString .= '<td>' . $list['email'] . '</td>';
+                $exportString .= '<td>' . $list['contactno'] . '</td>';
+                $exportString .= '<td>' . $this->search_in_array($this->getDistricts(array('id' => $list['district'])), 'district_name') . '</td>';
+                $exportString .= '<td>' . $this->search_in_array($this->getTehsils(array('id' => $list['tehsil'])), 'tehsil_name') . '</td>';
+                $exportString .= '<td>' . $this->search_in_array($this->getSubTehsils(array('id' => $list['sub_tehsil'])), 'name') . '</td>';
+                $exportString .= '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
+                $exportString .= '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
+                $exportString .= (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
+                $exportString .= '</tr>';
+                $i++;
+            }
+        }
+        else
+            $exportString .= '<tr><td colspan="15" style="text-align:center">' . $this->getMessage() . '</td>';
+
+        echo $exportString;
+        exit();
     }
 
 }

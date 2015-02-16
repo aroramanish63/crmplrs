@@ -91,8 +91,9 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
 
                             $i = 1;
                             foreach ($listingarr as $list) {
-                                if (($complaintFunc->isCounsellor($_SESSION['uid']) || $complaintFunc->isStateCoordinator($_SESSION['uid'])) && ($list['status'] == 0)) {
-                                    if ($complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['complaint_type'] !== '2' && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']))) {
+                                if (($complaintFunc->isCounsellor($_SESSION['uid']) || $complaintFunc->isStateCoordinator($_SESSION['uid']))) {
+//                                    if ($complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['complaint_type'] !== '2' && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']))) {
+                                    if ($complaintFunc->isStateCoordinator($_SESSION['uid']) && $list['status'] != 1 && (($list['counseller_stateco_id'] == $_SESSION['uid']) || $list['complaint_type'] == '2')) {
                                         echo '<tr>';
                                         echo '<td>' . $i . '</td>';
                                         echo '<td>' . $list['ticket_no'] . '</td>';
@@ -101,7 +102,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
                                         echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
-                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
+                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
                                         $i++;
@@ -115,7 +116,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
                                         echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
-                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
+                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
                                         $i++;
@@ -131,7 +132,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
                                         echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
-                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
+                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
                                         $i++;
@@ -147,7 +148,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                         echo '<td>' . $list['email'] . '</td>';
                                         echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
                                         echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
-                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
+                                        echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
                                         echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                         echo '</tr>';
                                         $i++;
@@ -162,7 +163,7 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                                     echo '<td>' . $list['email'] . '</td>';
                                     echo '<td>' . $userFunc->getUsername($list['created_by']) . '</td>';
                                     echo '<td>' . date('d-m-Y H:i:s', strtotime($list['add_date'])) . '</td>';
-                                    echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : '<td>Close</td>';
+                                    echo (isset($list['status']) && ($list['status'] == 0)) ? '<td>Open</td>' : (($list['status'] == 1) ? '<td>Close</td>' : (($list['status'] == 2) ? '<td>Forwarded</td>' : (($list['status'] == 3) ? '<td>Assign / Under Process</td>' : '<td>Completed</td>')));
                                     echo '<td><a href="' . SITE_URL . '?page=editComplaints&idu=' . $list['id'] . '"><img src="' . IMAGE_URL . 'bin.gif" width="16" title="Edit" height="16" alt="Edit" /></a></td>';
                                     echo '</tr>';
                                     $i++;

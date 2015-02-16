@@ -118,11 +118,15 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                         <input type="text" name="contactno" class="input-short" maxlength="10" readonly="readonly" onkeypress="return checknum(event);" id="contactno" value="<?php echo (isset($detail['contactno'])) ? $detail['contactno'] : ''; ?>" />
                                     </p>
                                     <p>
-                                        <label>City <span class="red">*</span></label>
-                                        <input type="text" name="city" class="input-short" readonly="readonly" id="city" value="<?php echo (isset($detail['city'])) ? $detail['city'] : ''; ?>" />
+                                        <label>Address <span class="red">*</span></label>
+                                        <textarea name="caddress" class="input-short" readonly="readonly" id="caddress"><?php echo (isset($detail['address'])) ? $detail['address'] : ''; ?></textarea>
                                     </p>
                                 </div>
                                 <div class="rightsection">
+                                    <p>
+                                        <label>City <span class="red">*</span></label>
+                                        <input type="text" name="city" class="input-short" readonly="readonly" id="city" value="<?php echo (isset($detail['city'])) ? $detail['city'] : ''; ?>" />
+                                    </p>
                                     <p>
                                         <label>District <span class="red">*</span></label>
                                         <select name="district" id="district" class="input-short" disabled="disabled" onchange="getTehsilbyAjax(this.value, 'tehsil', '<?php echo get_class($complaintFunc); ?>');">
@@ -166,9 +170,29 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                         </select>
                                     </p>
                                     <p>
-                                        <label>Address <span class="red">*</span></label>
-                                        <textarea name="caddress" class="input-short" readonly="readonly" id="caddress"><?php echo (isset($detail['address'])) ? $detail['address'] : ''; ?></textarea>
+                                        <label>Sub Tehsil <span class="red">*</span></label>
+                                        <select name="subtehsil" id="subtehsil" class="input-short" disabled="disabled">
+                                            <option value="">Select Sub Tehsil</option>
+                                            <?php
+                                            $selected = '';
+                                            if (isset($detail['tehsil'])) {
+                                                $subtehsil_list = $complaintFunc->getSubTehsils(array('tehsil_id' => $detail['tehsil']));
+                                                if (is_array($subtehsil_list) && count($subtehsil_list) > 0) {
+                                                    foreach ($subtehsil_list as $subtehsil) {
+                                                        if (isset($detail['tehsil']) && ($subtehsil['id'] === $detail['tehsil'])) {
+                                                            $selected = 'selected="selected"';
+                                                        }
+                                                        else {
+                                                            $selected = '';
+                                                        }
+                                                        echo '<option value="' . $subtehsil['id'] . '" ' . $selected . '>' . $subtehsil['name'] . '</option>';
+                                                    }
+                                                }
+                                            }
+                                            ?>
+                                        </select>
                                     </p>
+
                                 </div>
                             </div>
                         </fieldset>
@@ -224,16 +248,63 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                              * function for close the complaint
                                              */
                                             function complaintStatus(val) {
-                                                if (val !== '0') {
+
+                                                if (val.checked) {
                                                     var status = confirm('Are you sure you want to close Complaint ?');
                                                     if (!status) {
-                                                        document.getElementById('status').value = 0;
+                                                        document.getElementById('status').value = 2;
+                                                        document.getElementById('statusselect').value = 2;
+                                                        val.checked = false;
+                                                        return false;
                                                     }
                                                     else if (status) {
-                                                        document.getElementById('closebtn').style.display = 'block';
+                                                        document.getElementById('status').value = val.value;
+                                                        document.getElementById('statusselect').value = val.value;
+                                                        window.abillfrm.submit();
                                                     }
 
                                                 }
+                                                else {
+                                                    alert('Please select action.');
+                                                    document.getElementById('status').value = '';
+                                                    document.getElementById('statusselect').value = '';
+                                                    val.checked = false;
+                                                    return false;
+                                                }
+                                            }
+
+                                            /**
+                                             * function for validate form SDM
+                                             */
+                                            function validateAction() {
+                                                //                                                var action = document.getElementById('action').checked;
+                                                //                                                var action = document.getElementsByName('action').checked;
+                                                var comp_remarks = document.getElementById('comp_remarks');
+                                                if (!getCheckedRadioId('action')) {
+                                                    alert('Please select action.');
+                                                    return false;
+                                                }
+                                                var transferred_to = document.getElementById('transferred_to');
+                                                var transferdiv = document.getElementById('transferdiv');
+
+                                                if (typeof (transferdiv) != 'undefined' && transferdiv != null) {
+                                                    if (transferdiv.style.display === 'block')
+                                                    {
+                                                        if (transferred_to.value == '' || transferred_to.value.replace(/\s+$/, '') == '') {
+                                                            alert('Please select Transferred to.');
+                                                            transferred_to.focus();
+                                                            return false;
+                                                        }
+                                                    }
+                                                }
+                                                if (typeof (comp_remarks) != 'undefined' && comp_remarks != null) {
+                                                    if (comp_remarks.value == '' || comp_remarks.value.replace(/\s+$/, '') == '') {
+                                                        alert('Please enter complaint remarks.');
+                                                        comp_remarks.focus();
+                                                        return false;
+                                                    }
+                                                }
+                                                window.abillfrm.submit();
                                             }
                                         </script>
                                         <p>
@@ -242,8 +313,10 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                                 <option value="">Select Status</option>
                                                 <option value="0" <?php echo (isset($detail['status']) && ($detail['status'] == '0')) ? 'selected="selected"' : ''; ?>>Open</option>
                                                 <option value="1" <?php echo (isset($detail['status']) && ($detail['status'] == '1')) ? 'selected="selected"' : ''; ?>>Close</option>
-                                                <?php if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] === '2')) { ?>
+                                                <?php if (isset($detail['complaint_type']) && !empty($detail['complaint_type']) && ($detail['complaint_type'] === '1')) { ?>
                                                     <option value="2" <?php echo (isset($detail['status']) && ($detail['status'] == '2')) ? 'selected="selected"' : ''; ?>>Forward</option>
+                                                    <option value="3" <?php echo (isset($detail['status']) && ($detail['status'] == '3')) ? 'selected="selected"' : ''; ?>>Assign / Under Process</option>
+                                                    <option value="4" <?php echo (isset($detail['status']) && ($detail['status'] == '4')) ? 'selected="selected"' : ''; ?>>Completed</option>
                                                 <?php } ?>
                                             </select>
                                             <input type="hidden" name="status" id="status" value="<?php echo $detail['status']; ?>" />
@@ -336,8 +409,30 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                             <label>Select Action <span class="red">*</span></label>
                                             <input type="radio" name="action" id="action" value="1" onclick="enableTransfer(this.value);" /> Close
                                             &nbsp;
-                                            <input type="radio" name="action" id="forward" value="2" onclick="enableTransfer(this.value);" /> Forward
+                                            <?php if (isset($detail['status']) && $detail['status'] == '0') { ?>
+                                                <input type="radio" name="action" id="forward" value="2" onclick="enableTransfer(this.value);" /> Forward
+                                                <?php
+                                            }
+                                            else if (isset($detail['status']) && $detail['status'] == '2') {
+                                                ?>
+                                                <input type="radio" name="action" id="assign" value="3" onclick="enableTransfer(this.value);" /> Assign / Under Process
+                                            <?php } ?>
                                         </p>
+                                        <?php
+                                        if ($complaintFunc->isCallCentreStaff($_SESSION['uid']) && $detail['status'] == '0') {
+                                            echo '<p id="transferusergdiv" style="display:none;">';
+                                            $session_transfer_to_arr = explode(',', $_SESSION['transferred_to']);
+                                            if (is_array($session_transfer_to_arr) && count($session_transfer_to_arr) > 0) {
+                                                echo '<label>Transferred to Group<span class="red">*</span></label>';
+                                                foreach ($session_transfer_to_arr as $sess) {
+                                                    $post_array = array('btnsearch' => 1, 'u_group' => $sess);
+                                                    $usergroup = $complaintFunc->search_in_array($userFunc->getUserGroup($sess), 'group_name');
+                                                    echo '<input type="radio" name="transferugroup" id="assign" value="' . $sess . '" onclick="multiUsergroup(this.value,\"' . $usergroup . '\",\"transferdiv\");" /> ' . $usergroup . '&nbsp;';
+                                                }
+                                            }
+                                            echo '</p>';
+                                        }
+                                        ?>
                                         <p id="transferdiv" style="display:none;">
                                             <label>Transferred to <span class="red">*</span></label>
                                             <?php
@@ -357,6 +452,15 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                                 }
                                                 ?>
                                             </select>
+
+                                        </p>
+                                        <?php
+                                    }
+                                    else {
+                                        ?>
+                                        <p>
+                                            <label>Select Action <span class="red">*</span></label>
+                                            <input type="radio" name="action" id="action" value="4" onclick="enableTransfer(this.value);" /> Completed
                                         </p>
                                     <?php } ?>
                                     <p>
@@ -365,22 +469,37 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                         <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
                                         <input type="hidden" name="transferred_by_group" id="transferred_by_group" value="<?php echo $transferred_by; ?>" />
                                     </p>
+                                    <?php
+                                }
+// For Close Complaint by Selected counseller or state co ordinator
+                                if ((isset($detail['status']) && ($detail['status'] == '4')) && ($detail['complaint_type'] === '1') && ($detail['counseller_stateco_id'] == $_SESSION['uid']) && ($commentUser == false)) {
+                                    ?>
+                                    <p>
+                                        <label>Select Action <span class="red">*</span></label>
+                                        <input type="radio" name="action" id="action" value="1" onclick="document.getElementById('status').value = this.value;
+                                                                document.getElementById('statusselect').value = this.value;" /> Close
+                                    </p>
                                 <?php } ?>
+
                             </fieldset>
                         <?php }
                         ?>
                         <fieldset>
                             <input class="submit-gray" type="button" style="float:left" value="Back" onclick="gotopage('viewComplaints');" />
                             <?php
+//                            echo $commentUser;
 //                            if (!$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
-                            if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {
+                            if ((isset($detail['status']) && ($detail['status'] == '0' || $detail['status'] == '2' || $detail['status'] == '3')) && ($detail['complaint_type'] === '1') && ($commentUser == true)) {
                                 ?>
-                                <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                <input type="hidden" name="auserSubmit" value="1" />
+                                <input class="submit-green" type="button" value="Submit" onclick="validateAction();" />
+                                <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
                                 <?php
                             }
-                            else if ((isset($detail['status']) && ($detail['status'] == '0')) && ($detail['complaint_type'] === '1') && ($commentUser == false)) {
+                            else if ((isset($detail['status']) && ($detail['status'] == '2' || $detail['status'] == '4')) && ($detail['complaint_type'] === '1') && ($detail['counseller_stateco_id'] == $_SESSION['uid']) && ($commentUser == false)) {
                                 ?>
-                                <input id="closebtn" style="display:none;" class="submit-green" type="submit" name="auserSubmit" value="Submit" />
+                                <input id="closebtn" class="submit-green" type="button" value="Submit" onclick="complaintStatus(document.getElementById('action'));" />
+                                <input type="hidden" name="auserSubmit" value="1" />
                                 <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
                                 <?php
                             }

@@ -112,11 +112,15 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                                 <input type="text" name="contactno" class="input-short" maxlength="10" onkeypress="return checknum(event);" id="contactno" value="<?php echo (isset($_REQUEST['contactno'])) ? $_REQUEST['contactno'] : ''; ?>" />
                             </p>
                             <p>
-                                <label>City <span class="red">*</span></label>
-                                <input type="text" name="city" class="input-short" id="city" value="<?php echo (isset($_REQUEST['city'])) ? $_REQUEST['city'] : ''; ?>" />
+                                <label>Address <span class="red">*</span></label>
+                                <textarea name="caddress" class="input-short" id="caddress"><?php echo (isset($_REQUEST['caddress'])) ? $_REQUEST['caddress'] : ''; ?></textarea>
                             </p>
                         </div>
                         <div class="rightsection">
+                            <p>
+                                <label>City <span class="red">*</span></label>
+                                <input type="text" name="city" class="input-short" id="city" value="<?php echo (isset($_REQUEST['city'])) ? $_REQUEST['city'] : ''; ?>" />
+                            </p>
                             <p>
                                 <label>District <span class="red">*</span></label>
                                 <select name="district" id="district" class="input-short" onchange="getTehsilbyAjax(this.value, 'tehsil', '<?php echo get_class($complaintFunc); ?>');">
@@ -140,29 +144,51 @@ if (isset($_SERVER['REQUEST_METHOD']) && ($_SERVER['REQUEST_METHOD'] == 'POST'))
                             </p>
                             <p>
                                 <label>Tehsil <span class="red">*</span></label>
-                                <select name="tehsil" id="tehsil" class="input-short">
+                                <select name="tehsil" id="tehsil" class="input-short"  onchange="getSubTehsilbyAjax(this.value, 'subtehsil', '<?php echo get_class($complaintFunc); ?>');">
                                     <option value="">Select Tehsil</option>
                                     <?php
                                     $selected = '';
-                                    $tehsil_list = $complaintFunc->getTehsils();
-                                    if (is_array($tehsil_list) && count($tehsil_list) > 0) {
-                                        foreach ($tehsil_list as $tehsil) {
-                                            if (isset($_REQUEST['tehsil']) && ($tehsil['id'] === $_REQUEST['tehsil'])) {
-                                                $selected = 'selected="selected"';
+                                    if (isset($_REQUEST['district'])) {
+                                        $tehsil_list = $complaintFunc->getTehsils(array('district_id' => $_REQUEST['district']));
+                                        if (is_array($tehsil_list) && count($tehsil_list) > 0) {
+                                            foreach ($tehsil_list as $tehsil) {
+                                                if (isset($_REQUEST['tehsil']) && ($tehsil['id'] === $_REQUEST['tehsil'])) {
+                                                    $selected = 'selected="selected"';
+                                                }
+                                                else {
+                                                    $selected = '';
+                                                }
+                                                echo '<option value="' . $tehsil['id'] . '" ' . $selected . '>' . $tehsil['tehsil_name'] . '</option>';
                                             }
-                                            else {
-                                                $selected = '';
-                                            }
-                                            echo '<option value="' . $tehsil['id'] . '" ' . $selected . '>' . $tehsil['tehsil_name'] . '</option>';
                                         }
                                     }
                                     ?>
                                 </select>
                             </p>
                             <p>
-                                <label>Address <span class="red">*</span></label>
-                                <textarea name="caddress" class="input-short" id="caddress"><?php echo (isset($_REQUEST['caddress'])) ? $_REQUEST['caddress'] : ''; ?></textarea>
+                                <label>Sub Tehsil <span class="red">*</span></label>
+                                <select name="subtehsil" id="subtehsil" class="input-short">
+                                    <option value="">Select Sub Tehsil</option>
+                                    <?php
+                                    $selected = '';
+                                    if (isset($_REQUEST['tehsil'])) {
+                                        $subtehsil_list = $complaintFunc->getSubTehsils(array('tehsil_id' => $_REQUEST['tehsil']));
+                                        if (is_array($subtehsil_list) && count($subtehsil_list) > 0) {
+                                            foreach ($subtehsil_list as $subtehsil) {
+                                                if (isset($_REQUEST['subtehsil']) && ($subtehsil['id'] === $_REQUEST['subtehsil'])) {
+                                                    $selected = 'selected="selected"';
+                                                }
+                                                else {
+                                                    $selected = '';
+                                                }
+                                                echo '<option value="' . $subtehsil['id'] . '" ' . $selected . '>' . $subtehsil['name'] . '</option>';
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </select>
                             </p>
+
                         </div>
                     </div>
                 </fieldset>

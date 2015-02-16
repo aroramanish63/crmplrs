@@ -19,6 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $return_array = $obj->$func_name(array('district_id' => trim($_POST['id'])));
                         echo is_array($return_array) ? json_encode($return_array) : '';
                         break;
+                    case "getSubTehsils":
+                        $return_array = $obj->$func_name(array('tehsil_id' => trim($_POST['id'])));
+                        echo is_array($return_array) ? json_encode($return_array) : '0';
+                        break;
                 }
             }
             else

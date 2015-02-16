@@ -120,6 +120,7 @@ function getTehsilbyAjax(districtid, divid, classn) {
             class: classn,
             id: districtid
         };
+        $('#' + divid).html('<option value="">Loading...</option>');
         $.ajax({
             type: "POST",
             url: "index.php",
@@ -130,12 +131,60 @@ function getTehsilbyAjax(districtid, divid, classn) {
                     $(data).each(function (i, val) {
                         returnstring += '<option value="' + val['id'] + '">' + val['tehsil_name'] + '</option>';
                     });
-                    console.log(returnstring);
+//                    console.log(returnstring);
+                    $('#' + divid).html(returnstring);
+                }
+                else
+                    $('#' + divid).html(returnstring);
+            }
+        });
+    }
+}
+
+/**
+ * function for get sub tehsil
+ */
+function getSubTehsilbyAjax(tehsilid, divid, classn) {
+    if (tehsilid != '' && divid != '' && classn != '') {
+        var returnstring = '<option value="">Select Sub Tehsil</option>';
+        var sendstring = {
+            page: 'ajaxFunctions',
+            ajx: 'Yes',
+            func_name: 'getSubTehsils',
+            class: classn,
+            id: tehsilid
+        };
+        $('#' + divid).html('<option value="">Loading...</option>');
+        $.ajax({
+            type: "POST",
+            url: "index.php",
+            data: sendstring,
+            dataType: 'json',
+            success: function (data) {
+                if (typeof (data) === 'object') {
+                    $(data).each(function (i, val) {
+                        returnstring += '<option value="' + val['id'] + '">' + val['name'] + '</option>';
+                    });
+                    $('#' + divid).html(returnstring);
+                }
+                else {
                     $('#' + divid).html(returnstring);
                 }
             }
         });
     }
+}
+
+function getCheckedRadioId(name) {
+    var elements = document.getElementsByName(name);
+
+    for (var i = 0, len = elements.length; i < len; ++i) {
+        if (elements[i].checked)
+            return true;
+    }
+
+    return false;
+
 }
 
 /**
@@ -176,6 +225,49 @@ function enableTransfer(val) {
             document.getElementById('status').value = val;
             document.getElementById('statusselect').value = val;
         }
+        else if (val === '3') {
+            document.getElementById('transferdiv').style.display = 'block';
+            document.getElementById('status').value = val;
+            document.getElementById('statusselect').value = val;
+        }
+        else if (val === '4') {
+            document.getElementById('status').value = val;
+            document.getElementById('statusselect').value = val;
+        }
+    }
+}
+
+/**
+ * Function for multiple user group transfer For Example: Call center Staff transfer to StateCoordinator, Counseller
+ */
+function multiUsergroup(groupid, groupname, divid, classn) {
+    if (groupid != '' && divid != '' && classn != '') {
+        var returnstring = '<option value="">Select ' + groupname + '</option>';
+        var sendstring = {
+            page: 'ajaxFunctions',
+            ajx: 'Yes',
+            func_name: 'getSubTehsils',
+            class: classn,
+            id: groupid
+        };
+        $('#' + divid).html('<option value="">Loading...</option>');
+        $.ajax({
+            type: "POST",
+            url: "index.php",
+            data: sendstring,
+            dataType: 'json',
+            success: function (data) {
+                if (typeof (data) === 'object') {
+                    $(data).each(function (i, val) {
+                        returnstring += '<option value="' + val['id'] + '">' + val['name'] + '</option>';
+                    });
+                    $('#' + divid).html(returnstring);
+                }
+                else {
+                    $('#' + divid).html(returnstring);
+                }
+            }
+        });
     }
 }
 
@@ -415,5 +507,14 @@ function gotopage(page_name) {
     window.location = document.getElementById('URL_SITE').getAttribute('title') + '?page=' + page_name;
 }
 
+/**
+ * function for export report
+ */
+function exportCheck() {
+    document.getElementById('export').value = 'Yes';
+    window.searchfrm.action = 'export.php';
+    window.searchfrm.submit();
+    window.searchfrm.action = '';
+}
 
 

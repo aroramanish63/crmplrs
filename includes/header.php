@@ -77,7 +77,7 @@
                 <div class="container_12">
                     <div class="grid_12">
                         <div id="logo"><a href="<?php echo SITE_URL; ?>"><img alt="PLRS logo" src="images/logo-plrs-inner.png" /></a></div>
-                        <div class="headernav" style="margin-right: 100px;">
+                        <div class="headernav" <?php echo isset($_SESSION['role']['userManagement']) ? 'style="margin-right: 70px;"' : 'style="margin-right: 100px;"'; ?>>
                             <ul id="drop-nav">
                                 <li><a href="<?php echo SITE_URL; ?>">Dashboard</a></li>
                                 <?php
@@ -99,6 +99,11 @@
                                     <li><a href="javascript:void(0);">Complaint Management</a>
                                         <ul>
                                             <?php echo (isset($_SESSION['role']['viewComplaints'])) ? '<li><a href="' . SITE_URL . '?page=viewComplaints">View Complaints</a></li>' : ''; ?>
+                                            <?php if ($commonObj->isCallCentreStaff($_SESSION['uid'])) { ?>
+                                                <li><a href="<?php echo SITE_URL . '?page=closeComplaints'; ?>">Close Enquiries</a></li>
+                                                <li><a href="<?php echo SITE_URL . '?page=forwardedComplaints'; ?>">Forwarded Complaints</a></li>
+                                            <?php } ?>
+                                            <li><a href="<?php echo SITE_URL . '?page=reportsComplaints'; ?>">Complaints Report</a></li>
                                         </ul>
                                     </li>
                                     <?php
@@ -116,10 +121,19 @@
                                 <?php echo (isset($_SESSION['role']['userProfile'])) ? '<li><a href="' . SITE_URL . '?page=userProfile">Profile</a></li>' : ''; ?>
                                 <li><a href="#">Links</a>
                                     <ul>
-                                        <li><a href="http://210.212.41.167/frmSelectDistrict.aspx">Fard</a></li>
-                                        <li><a href="http://202.164.37.185/">Stamp Duty Calculator</a></li>
+                                        <li><a href="http://210.212.41.167/frmSelectDistrict.aspx" target="_blank">Fard</a></li>
+                                        <li><a href="http://202.164.37.185/" target="_blank">Stamp Duty Calculator</a></li>
+                                        <li><a href="http://punjabrevenue.nic.in/fmanu.htm" target="_blank">Manuals</a></li>
+                                        <li><a href="http://punjabrevenue.nic.in/fstate.htm" target="_blank">State Acts</a></li>
+                                        <li><a href="http://punjabrevenue.nic.in/fglands.htm" target="_blank">Govt. Lands</a></li>
+                                        <li><a href="http://www.mapsofindia.com/maps/punjab/districts/" target="_blank">Map of Punjab</a></li>
+                                        <li><a href="http://pbplanning.gov.in/districts.htm" target="_blank">Districts</a></li>
+                                        <li><a href="http://vlist.in/state/03.html" target="_blank">Villages</a></li>
+                                        <li><a href="http://www.examresultinfo.com/threads/1309-www-plrs-org-in-Punjab-Land-Records-Society-Fard-PLRS-khata-khatauni-Khasra-Mutation-Report" target="_blank">How to use PLRS website</a></li>
+                                        <li><a href="http://www.examresultinfo.com/threads/1310-www-plrs-org-in-Punjab-Land-Records-Request-for-Correction-of-Records-amp-Mutation-PLRS-Online-Application-Form" target="_blank">PLRS Online Form</a></li>
                                     </ul>
                                 </li>
+                                <li><a href="<?php echo SITE_URL; ?>plrsfaqs.pdf" target="_blank">FAQs</a></li>
                             </ul>
                         </div>
 

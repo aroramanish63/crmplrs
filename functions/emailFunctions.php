@@ -30,7 +30,7 @@ class emailFunctions extends commonFxn {
         $this->mail->IsHTML(true);
     }
 
-    function sendEmail($to, $subject, $message, $cc = array(), $bcc = array()) {
+    public function sendEmail($to, $subject, $message, $cc = array(), $bcc = array()) {
         for ($i = 0; $i < count($to); $i++)
             $this->mail->AddAddress($to[$i]);
         for ($i = 0; $i < count($cc); $i++)
@@ -123,7 +123,7 @@ class emailFunctions extends commonFxn {
             $message .= '<br><br>Sincerely,<br>PLRS Customer Care Team<br>';
             $to = $fields['cemail'];
             $subj = "Complaint Registered Successfully";
-            $this->sendEmail($to, $subj, $message);
+            $this->sendEmail(array($to), $subj, $message);
         }
     }
 
@@ -140,7 +140,7 @@ class emailFunctions extends commonFxn {
                     . '<br><br>With Regards,<br>PLRS Team<br>';
             $to = $fields[1];
             $subj = "Complaint Closed Successfully";
-            $this->sendEmail($to, $subj, $message);
+            $this->sendEmail(array($to), $subj, $message);
         }
     }
 
@@ -158,8 +158,40 @@ class emailFunctions extends commonFxn {
                     . '<br><br>With Regards,<br>PLRS Team<br>';
             $to = $fields[1];
             $subj = "Complaint Closed Successfully";
-            $this->sendEmail($to, $subj, $message);
+            $this->sendEmail(array($to), $subj, $message);
         }
     }
 
+//    public function sendmailtoadmin($username, $email) {
+//        $html = '';
+//        $subject = 'PLRSCRM User Deactivated';
+//
+//        $sentfrom = 'plrscrm';
+//        $sentname = 'plrscrm';
+//
+//        $mail = new PHPMailer();
+//        $mail->IsSMTP();                           // tell the class to use SMTP
+//        $mail->SMTPAuth = true;                  // enable SMTP authentication
+//        $mail->SMTPSecure = 'tls';
+//        $mail->Port = 25;                    // set the SMTP server port
+//        $mail->Host = "mail.cloudoye.in";
+//        $mail->Username = "admin@cloudoye.in";
+//        $mail->Password = "Sghdwsw$3231";
+//        // SMTP server password
+//        $mail->IsHTML(true);
+//        $mail->SetFrom($sentfrom, $sentname);
+//
+//        $mail->AddAddress("harpreet.kaur@cyfuture.com");
+//
+//        $mail->Subject = $subject;
+//        $mail->SMTPDebug = 2;
+//        $html = 'User with username : ' . $username . ' and Email : ' . $email . ' has been deactivated due to wrong login attempts!';
+//
+//        $mail->Body = $html;
+//        //$mail->WordWrap = 50;
+//
+//        if ($mail->Send()) {
+//            //echo '<!-- Mail sent -->';
+//        }
+//    }
 }

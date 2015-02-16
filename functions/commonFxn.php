@@ -16,6 +16,7 @@ class commonFxn extends commonClass {
     protected $plrs_sms_content = 'plrs_sms_content';
     protected $plrs_district_mstr = 'plrs_district_mstr';
     protected $plrs_division_mstr = 'plrs_division_mstr';
+    protected $plrs_subtehsil_mastr = 'plrs_subtehsil_mastr';
     protected $plrs_tehsil_mstr = 'plrs_tehsil_mstr';
     protected $plrs_countries = 'plrs_countries';
     protected $plrs_caller_type = 'plrs_caller_type';
@@ -254,6 +255,35 @@ class commonFxn extends commonClass {
             }
         }
         $resultSet = mysql_query("select * from `$this->plrs_tehsil_mstr` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getSubTehsils($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('district_id', $filter)) {
+                $condition .= " and `district_id` = '" . $filter['district_id'] . "'";
+            }
+            if (array_key_exists('tehsil_id', $filter)) {
+                $condition .= " and `tehsil_id` = '" . $filter['tehsil_id'] . "'";
+            }
+            if (array_key_exists('division_id', $filter)) {
+                $condition .= " and `division_id` = '" . $filter['division_id'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_subtehsil_mastr` where status = '1' $condition") or die(mysql_error());
         if (mysql_num_rows($resultSet) > 0) {
             while ($rows = mysql_fetch_assoc($resultSet)) {
                 $returnArr[] = $rows;
