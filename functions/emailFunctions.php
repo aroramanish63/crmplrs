@@ -117,7 +117,7 @@ class emailFunctions extends commonFxn {
                     . '<br><br>'
                     . 'Your support ticket number is ' . $fields['ticket_no'] . '<br/>';
             if (array_key_exists('txt_content', $fields)) {
-                $message .= 'Kindly find below the response regarding your query:';
+                $message .= '<br/>Kindly find below the response regarding your query:';
                 $message .= $fields['txt_content'];
             }
             $message .= '<br><br>Sincerely,<br>PLRS Customer Care Team<br>';
@@ -149,15 +149,15 @@ class emailFunctions extends commonFxn {
             $message = '';
             $message .= '<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">'
                     . 'Hi,' . $fields[0] . '<br><br>'
-                    . 'We have successfully close your complaint. Please find details below:'
+                    . 'We have successfully close your ' . $fields[4] . '. Please find details below:'
                     . '<br><br>'
                     . 'Name:' . $fields[0] . '<br/>'
                     . 'Email:' . $fields[1] . '<br/>'
-                    . 'Feedback Ticket No.:' . $fields[2] . '<br/>'
-                    . 'Feedback Remarks:' . $fields[2] . '<br/>'
+                    . $fields[4] . ' Ticket No.:' . $fields[2] . '<br/>'
+                    . $fields[4] . ' Remarks:' . $fields[3] . '<br/>'
                     . '<br><br>With Regards,<br>PLRS Team<br>';
             $to = $fields[1];
-            $subj = "Complaint Closed Successfully";
+            $subj = $fields[4] . " Closed Successfully";
             $this->sendEmail(array($to), $subj, $message);
         }
     }

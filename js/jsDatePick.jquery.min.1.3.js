@@ -8,7 +8,7 @@ g_l.YEAR_BCK = "Move a year backward";
 g_l.CLOSE = "Close the calendar";
 g_l.ERROR_2 = g_l.ERROR_1 = "Date object invalid!";
 g_l.ERROR_4 = g_l.ERROR_3 = "Target invalid!";
-g_jsDatePickImagePath = $('#URL_SITE').attr('title')+"img/";
+g_jsDatePickImagePath = $('#URL_SITE').attr('title') + "img/";
 g_jsDatePickDirectionality = "ltr";
 g_arrayOfUsedJsDatePickCalsGlobalNumbers = [];
 g_arrayOfUsedJsDatePickCals = [];
@@ -256,8 +256,8 @@ JsDatePick.prototype.makeCalendar = function () {
                 this.initialZIndex++;
                 e.style.zIndex = this.initialZIndex.toString();
                 e.style.position = "absolute";
-                e.style.top = "18px";
-                e.style.left = "0px";
+                e.style.top = "23px"; // "18px"
+                e.style.left = "-184px"; //"0px"
                 e.style.display = "none";
                 l.appendChild(e);
                 c = new Function("g_arrayOfUsedJsDatePickCals[" + this.globalNumber + "].populateFieldWithSelectedDate();");
@@ -319,7 +319,7 @@ JsDatePick.prototype.determineFieldDate = function () {
                         case"%Y":
                         case"%y":
                             h = d
-                        }
+                    }
                 }
                 if (f) {
                     for (d = 0; d < 12; d++) {

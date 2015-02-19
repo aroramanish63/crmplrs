@@ -2,6 +2,8 @@
 if (!defined('BASE_PATH'))
     die('Access Denied.');
 $complaintFunc = $commonObj->load_class_object('complaintFunctions');
+$complaintFunc->getDatePickerJs();
+$complaintFunc->getDatePicker('startDate', 'endDate');
 ?>
 <script type="text/javascript">
     function validatefilter() {
@@ -131,6 +133,12 @@ $complaintFunc = $commonObj->load_class_object('complaintFunctions');
                 <input style="float:left;width:150px;" type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
                 <label style="float:left;">Contact No.:</label>
                 <input style="float:left;width:150px;" type="text" name="contact_no" id="contact_no" class="input-short" value="<?php echo (isset($_REQUEST['contact_no'])) ? $_REQUEST['contact_no'] : '' ?>"/>
+                <br/><br/>
+                <label style="float:left;">From Date</label>
+                <input style="float:left;width:150px;" type="text" class="input-short" value="<?php echo (isset($_REQUEST['fromdate'])) ? $_REQUEST['fromdate'] : '' ?>" readonly="readonly" name="fromdate" id="startDate" />
+                <label style="float:left;">To Date</label>
+                <input style="float:left;width:150px;" type="text" class="input-short" value="<?php echo (isset($_REQUEST['todate'])) ? $_REQUEST['todate'] : '' ?>" readonly="readonly" name="todate" id="endDate" />
+
                 <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green" style="float:left;">
                 <input type="button" value="Export Report" id="btnsearch" onclick="exportCheck();" class="submit-gray" style="float:left;">
                 <input type="hidden" name="export" id="export" value="no" />

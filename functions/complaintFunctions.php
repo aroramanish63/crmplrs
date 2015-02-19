@@ -73,6 +73,18 @@ class complaintFunctions extends commonFxn {
             $condition .= " and contactno='" . $this->real_escape_string($_POST['contact_no']) . "'";
         }
 
+        if (isset($_POST['fromdate']) && $_POST['fromdate'] !== '' && $_POST['todate'] == '') {
+            $condition .= " and date(add_date)='" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['fromdate']))) . "'";
+        }
+
+        if (isset($_POST['todate']) && $_POST['todate'] !== '' && $_POST['fromdate'] == '') {
+            $condition .= " and date(add_date)='" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['todate']))) . "'";
+        }
+
+        if (isset($_POST['fromdate']) && $_POST['fromdate'] !== '' && isset($_POST['todate']) && $_POST['todate'] !== '') {
+            $condition .= " and date(add_date) between '" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['fromdate']))) . "' and '" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['todate']))) . "'";
+        }
+
         $selectData = mysql_query("select * from $this->plrs_complaint $condition $order") or die(mysql_error());
         if ($this->countTablerows($selectData) > 0) {
             while ($rows = mysql_fetch_assoc($selectData)) {
@@ -323,17 +335,21 @@ class complaintFunctions extends commonFxn {
                     if (isset($_POST['comp_remarks']) && !empty($_POST['comp_remarks'])) {
                         mysql_query("INSERT INTO `$this->plrs_user_comment`(`created_by`, `complaint_id`, `remarks`, `is_open`, `add_date`) VALUES ('$created_by','$comp_id','$remarks','1','$add_date')") or die(mysql_error());
                         $qry = mysql_query("UPDATE `$this->plrs_complaint` SET `status`='1' where `id` = '$comp_id'") or die(mysql_error());
-
-                        if (is_a($emailFunc, 'emailFunctions')) {
-                            $emailFieldarry = array($cname, $cemail, $complaintno, $remarks);
-                            $emailFunc->onFeedback($emailFieldarry);
-                        }
+                        $email_comp_type = 'Feedback';
                         if ($_POST['comp_type'] == '2') {
+                            $email_comp_type = 'Feedback';
                             $this->setSessionMessage('Feedback updated successfully.', 'success');
                         }
                         else if ($_POST['comp_type'] == '3' || $_POST['comp_type'] == '4') {
+                            $email_comp_type = 'Enquiry';
                             $this->setSessionMessage('Enquiry updated successfully.', 'success');
                         }
+
+                        if (is_a($emailFunc, 'emailFunctions')) {
+                            $emailFieldarry = array($cname, $cemail, $complaintno, $remarks, $email_comp_type);
+                            $emailFunc->onFeedback($emailFieldarry);
+                        }
+
                         return true;
                     }
                     else {

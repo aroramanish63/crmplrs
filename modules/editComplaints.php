@@ -418,21 +418,6 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                                 <input type="radio" name="action" id="assign" value="3" onclick="enableTransfer(this.value);" /> Assign / Under Process
                                             <?php } ?>
                                         </p>
-                                        <?php
-                                        if ($complaintFunc->isCallCentreStaff($_SESSION['uid']) && $detail['status'] == '0') {
-                                            echo '<p id="transferusergdiv" style="display:none;">';
-                                            $session_transfer_to_arr = explode(',', $_SESSION['transferred_to']);
-                                            if (is_array($session_transfer_to_arr) && count($session_transfer_to_arr) > 0) {
-                                                echo '<label>Transferred to Group<span class="red">*</span></label>';
-                                                foreach ($session_transfer_to_arr as $sess) {
-                                                    $post_array = array('btnsearch' => 1, 'u_group' => $sess);
-                                                    $usergroup = $complaintFunc->search_in_array($userFunc->getUserGroup($sess), 'group_name');
-                                                    echo '<input type="radio" name="transferugroup" id="assign" value="' . $sess . '" onclick="multiUsergroup(this.value,\"' . $usergroup . '\",\"transferdiv\");" /> ' . $usergroup . '&nbsp;';
-                                                }
-                                            }
-                                            echo '</p>';
-                                        }
-                                        ?>
                                         <p id="transferdiv" style="display:none;">
                                             <label>Transferred to <span class="red">*</span></label>
                                             <?php
@@ -503,7 +488,7 @@ if (isset($_REQUEST['idu']) && trim($_REQUEST['idu']) != '') {
                                 <input type="hidden" name="comp_type" value="<?php echo $detail['complaint_type']; ?>" />
                                 <?php
                             }
-                            else if (isset($detail['status']) && ($detail['status'] == '0') && ($detail['complaint_type'] === '2')) {
+                            else if (isset($detail['status']) && ($detail['status'] == '0') && ($detail['complaint_type'] === '2') && !$complaintFunc->isCallCentreStaff($_SESSION['uid'])) {
                                 ?>
                                 <input class="submit-green" type="submit" name="auserSubmit" value="Submit" />
                                 <?php

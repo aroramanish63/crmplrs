@@ -198,6 +198,7 @@ function getCallercountries(callertypeid, elementid) {
         if (callertypeid === '1') {
             $('#' + elementid).val('99');
             $('#country_id').val('99');
+            $('#' + elementid).attr('disabled', 'disabled');
         }
         else {
             $('#' + elementid).val('');
@@ -234,40 +235,6 @@ function enableTransfer(val) {
             document.getElementById('status').value = val;
             document.getElementById('statusselect').value = val;
         }
-    }
-}
-
-/**
- * Function for multiple user group transfer For Example: Call center Staff transfer to StateCoordinator, Counseller
- */
-function multiUsergroup(groupid, groupname, divid, classn) {
-    if (groupid != '' && divid != '' && classn != '') {
-        var returnstring = '<option value="">Select ' + groupname + '</option>';
-        var sendstring = {
-            page: 'ajaxFunctions',
-            ajx: 'Yes',
-            func_name: 'getSubTehsils',
-            class: classn,
-            id: groupid
-        };
-        $('#' + divid).html('<option value="">Loading...</option>');
-        $.ajax({
-            type: "POST",
-            url: "index.php",
-            data: sendstring,
-            dataType: 'json',
-            success: function (data) {
-                if (typeof (data) === 'object') {
-                    $(data).each(function (i, val) {
-                        returnstring += '<option value="' + val['id'] + '">' + val['name'] + '</option>';
-                    });
-                    $('#' + divid).html(returnstring);
-                }
-                else {
-                    $('#' + divid).html(returnstring);
-                }
-            }
-        });
     }
 }
 
