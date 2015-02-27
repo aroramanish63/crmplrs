@@ -20,6 +20,9 @@ class commonFxn extends commonClass {
     protected $plrs_tehsil_mstr = 'plrs_tehsil_mstr';
     protected $plrs_countries = 'plrs_countries';
     protected $plrs_caller_type = 'plrs_caller_type';
+    protected $plrs_complaint_subtype = 'plrs_complaint_subtype';
+    protected $plrs_complaint_subtype_nested = 'plrs_complaint_subtype_nested';
+    protected $plrs_state_mstr = 'plrs_state_mstr';
 
     // For Previous CRM
 //    protected $usergrp_billperTable = 'tbl_usergroup_bill_permission';
@@ -284,6 +287,81 @@ class commonFxn extends commonClass {
             }
         }
         $resultSet = mysql_query("select * from `$this->plrs_subtehsil_mastr` where status = '1' $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getComplaintsSubtype($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('comp_type_id', $filter)) {
+                $condition .= " and `comp_type_id` = '" . $filter['comp_type_id'] . "'";
+            }
+            if (array_key_exists('subtype_name', $filter)) {
+                $condition .= " and `subtype_name` = '" . $filter['subtype_name'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_complaint_subtype` where 1 = 1 $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getComplaintsNestedSubtype($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('subtype_id', $filter)) {
+                $condition .= " and `subtype_id` = '" . $filter['subtype_id'] . "'";
+            }
+            if (array_key_exists('nested_name', $filter)) {
+                $condition .= " and `nested_name` = '" . $filter['nested_name'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_complaint_subtype_nested` where 1 = 1 $condition") or die(mysql_error());
+        if (mysql_num_rows($resultSet) > 0) {
+            while ($rows = mysql_fetch_assoc($resultSet)) {
+                $returnArr[] = $rows;
+            }
+            return $returnArr;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public function getState($filter) {
+        $condition = '';
+        $returnArr = array();
+        if (is_array($filter) && count($filter) > 0) {
+            if (array_key_exists('id', $filter)) {
+                $condition .= " and `id` = '" . $filter['id'] . "'";
+            }
+            if (array_key_exists('state_name', $filter)) {
+                $condition .= " and `state_name` = '" . $filter['state_name'] . "'";
+            }
+        }
+        $resultSet = mysql_query("select * from `$this->plrs_state_mstr` where 1 = 1 $condition") or die(mysql_error());
         if (mysql_num_rows($resultSet) > 0) {
             while ($rows = mysql_fetch_assoc($resultSet)) {
                 $returnArr[] = $rows;

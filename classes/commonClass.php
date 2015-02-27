@@ -11,6 +11,7 @@ class commonClass {
     private $dbname;
     private $message;
     private $messageType = ''; // success, information, attention, error
+    private $messageboxId = ''; // msgBox
     private $pagelimit = 30;
     public $connectionid;
     public $inputErrormsg = array();
@@ -162,15 +163,18 @@ class commonClass {
         return $this->messageType;
     }
 
-    public function setSessionMessage($messageTxt, $messageType = '') {
+    public function setSessionMessage($messageTxt, $messageType = '', $hideMsg = true) {
         $_SESSION['msgtxt'] = $messageTxt;
         if ($messageType != '')
             $_SESSION['msgtype'] = $messageType;
+
+        if ($hideMsg)
+            $this->messageboxId = 'msgBox';
     }
 
     public function getSessionMessage() {
         if (isset($_SESSION['msgtxt']) && isset($_SESSION['msgtype'])) {
-            return '<span id="msgBox" class="notification n-' . $_SESSION['msgtype'] . '">' . $_SESSION['msgtxt'] . '</span>';
+            return '<span id="' . $this->messageboxId . '" class="notification n-' . $_SESSION['msgtype'] . '">' . $_SESSION['msgtxt'] . '</span>';
         }
         else if (isset($_SESSION['msgtxt']) && !isset($_SESSION['msgtype'])) {
             return $_SESSION['msgtxt'];

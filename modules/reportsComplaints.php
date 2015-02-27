@@ -2,6 +2,7 @@
 if (!defined('BASE_PATH'))
     die('Access Denied.');
 $complaintFunc = $commonObj->load_class_object('complaintFunctions');
+$userFunc = $commonObj->load_class_object('userFunctions');
 $complaintFunc->getDatePickerJs();
 $complaintFunc->getDatePicker('startDate', 'endDate');
 ?>
@@ -36,7 +37,7 @@ $complaintFunc->getDatePicker('startDate', 'endDate');
             <p>
                 <!--                <label style="float:left;margin-right: 10px;">Complaint No.:</label>
                                 <input style="float:left;margin-right: 10px;width:160px;" type="text" name="complaintno" class="input-short" id="complaintno" value="<?php echo (isset($_REQUEST['complaintno'])) ? $_REQUEST['complaintno'] : ''; ?>" />-->
-                <label style="float:left;">Select Caller</label>
+                <label style="float:left;">Select Caller:</label>
                 <select style="float:left;width:160px;" name="caller" id="caller" class="input-short" onchange="getCallercountries(this.value, 'country');">
                     <option value="">Select Caller</option>
                     <?php
@@ -68,7 +69,7 @@ $complaintFunc->getDatePicker('startDate', 'endDate');
                 <input style="float:left;width:150px;" type="text" name="complaint_no" id="complaint_no" class="input-short" value="<?php echo (isset($_REQUEST['complaint_no'])) ? $_REQUEST['complaint_no'] : '' ?>"/>
                 <br/>
                 <br/>
-                <label style="float:left;">District</label>
+                <label style="float:left;">District:</label>
                 <select style="float:left;width:160px;" name="district" id="district" class="input-short" onchange="getTehsilbyAjax(this.value, 'tehsil', '<?php echo get_class($complaintFunc); ?>');">
                     <option value="">Select District</option>
                     <?php
@@ -87,7 +88,7 @@ $complaintFunc->getDatePicker('startDate', 'endDate');
                     }
                     ?>
                 </select>
-                <label style="float:left;">Tehsil</label>
+                <label style="float:left;">Tehsil:</label>
                 <select style="float:left;width:160px;" name="tehsil" id="tehsil" class="input-short"  onchange="getSubTehsilbyAjax(this.value, 'subtehsil', '<?php echo get_class($complaintFunc); ?>');">
                     <option value="">Select Tehsil</option>
                     <?php
@@ -106,7 +107,7 @@ $complaintFunc->getDatePicker('startDate', 'endDate');
                     }
                     ?>
                 </select>
-                <label style="float: left;">Sub Tehsil</label>
+                <label style="float: left;">Sub Tehsil:</label>
                 <select style="float: left;width:160px;" name="subtehsil" id="subtehsil" class="input-short">
                     <option value="">Select Sub Tehsil</option>
                     <?php
@@ -132,12 +133,35 @@ $complaintFunc->getDatePicker('startDate', 'endDate');
                 <label style="float:left;">Email:</label>
                 <input style="float:left;width:150px;" type="text" name="email" id="email" class="input-short" value="<?php echo (isset($_REQUEST['email'])) ? $_REQUEST['email'] : '' ?>"/>
                 <label style="float:left;">Contact No.:</label>
-                <input style="float:left;width:150px;" type="text" name="contact_no" id="contact_no" class="input-short" value="<?php echo (isset($_REQUEST['contact_no'])) ? $_REQUEST['contact_no'] : '' ?>"/>
+                <input style="float:left;width:155px;" type="text" name="contact_no" id="contact_no" class="input-short" value="<?php echo (isset($_REQUEST['contact_no'])) ? $_REQUEST['contact_no'] : '' ?>"/>
+                <label style="float:left;">Complaints By:</label>
+                <?php
+                $post_array = array('btnsearch' => 1, 'uid' => $_SESSION['uid']);
+                $transferred_by = $complaintFunc->search_in_array($userFunc->getUserGroup($_SESSION['user_group']), 'group_name');
+                $group_arra = $userFunc->getUserListingBySearch($post_array);
+                ?>
+                <select style="float:left;width:160px;" name="complaints_by" id="complaints_by">
+                    <option value="">Select <?php echo $transferred_by; ?></option>
+                    <?php
+                    $select = '';
+                    if (is_array($group_arra) && count($group_arra) > 0) {
+                        foreach ($group_arra as $ugroup) {
+                            if (isset($_REQUEST['complaints_by']) && ($ugroup['id'] === $_REQUEST['complaints_by'])) {
+                                $select = 'selected="selected"';
+                            }
+                            else {
+                                $select = '';
+                            }
+                            echo '<option value="' . $ugroup['id'] . '" ' . $select . '>' . $ugroup['name'] . '</option>';
+                        }
+                    }
+                    ?>
+                </select>
                 <br/><br/>
-                <label style="float:left;">From Date</label>
+                <label style="float:left;">From Date:</label>
                 <input style="float:left;width:150px;" type="text" class="input-short" value="<?php echo (isset($_REQUEST['fromdate'])) ? $_REQUEST['fromdate'] : '' ?>" readonly="readonly" name="fromdate" id="startDate" />
-                <label style="float:left;">To Date</label>
-                <input style="float:left;width:150px;" type="text" class="input-short" value="<?php echo (isset($_REQUEST['todate'])) ? $_REQUEST['todate'] : '' ?>" readonly="readonly" name="todate" id="endDate" />
+                <label style="float:left;">To Date:</label>
+                <input style="float:left;width:155px;" type="text" class="input-short" value="<?php echo (isset($_REQUEST['todate'])) ? $_REQUEST['todate'] : '' ?>" readonly="readonly" name="todate" id="endDate" />
 
                 <input type="submit" name="btnsearch" value="Search" id="btnsearch" class="submit-green" style="float:left;">
                 <input type="button" value="Export Report" id="btnsearch" onclick="exportCheck();" class="submit-gray" style="float:left;">

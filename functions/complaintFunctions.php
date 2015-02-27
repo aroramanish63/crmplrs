@@ -17,16 +17,20 @@ class complaintFunctions extends commonFxn {
             $order = " order by id desc";
         }
 
-        $selectData = mysql_query("select * from $this->plrs_complaint $condition $order") or die(mysql_error());
-        if ($this->countTablerows($selectData) > 0) {
-            while ($rows = mysql_fetch_assoc($selectData)) {
-                $returnArr[] = $rows;
+        $selectData = mysql_query("select * from $this->plrs_complaint $condition $order");
+        if ($selectData) {
+            if ($this->countTablerows($selectData) > 0) {
+                while ($rows = mysql_fetch_assoc($selectData)) {
+                    $returnArr[] = $rows;
+                }
+                return $returnArr;
             }
-            return $returnArr;
+            else {
+                $this->setMessage('No Records Found.');
+            }
         }
-        else {
-            $this->setMessage('No Records Found.');
-        }
+        else
+            $this->setMessage('Something unexpected happen. Please try again later.');
     }
 
     public function getPLRSComplaintbyCriteria() {
@@ -85,15 +89,35 @@ class complaintFunctions extends commonFxn {
             $condition .= " and date(add_date) between '" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['fromdate']))) . "' and '" . $this->real_escape_string(date('Y-m-d', strtotime($_POST['todate']))) . "'";
         }
 
-        $selectData = mysql_query("select * from $this->plrs_complaint $condition $order") or die(mysql_error());
-        if ($this->countTablerows($selectData) > 0) {
-            while ($rows = mysql_fetch_assoc($selectData)) {
-                $returnArr[] = $rows;
+        if (isset($_POST['complaints_by']) && $_POST['complaints_by'] !== '') {
+            if ($this->isCallCentreStaff($_POST['complaints_by'])) {
+                $condition .= " and created_by='" . $this->real_escape_string($_POST['complaints_by']) . "'";
             }
-            return $returnArr;
+            else if ($this->isCounsellor($_POST['complaints_by'])) {
+                $condition .= " and counseller_stateco_id='" . $this->real_escape_string($_POST['complaints_by']) . "'";
+            }
+            else if ($this->isSDM($_POST['complaints_by'])) {
+                $condition .= " and sdm_id='" . $this->real_escape_string($_POST['complaints_by']) . "'";
+            }
+            else if ($this->isStateCoordinator($_POST['complaints_by'])) {
+                $condition .= " and counseller_stateco_id='" . $this->real_escape_string($_POST['complaints_by']) . "'";
+            }
+        }
+
+        $selectData = mysql_query("select * from $this->plrs_complaint $condition $order");
+        if ($selectData) {
+            if ($this->countTablerows($selectData) > 0) {
+                while ($rows = mysql_fetch_assoc($selectData)) {
+                    $returnArr[] = $rows;
+                }
+                return $returnArr;
+            }
+            else {
+                $this->setMessage('No Records Found.');
+            }
         }
         else {
-            $this->setMessage('No Records Found.');
+            $this->setMessage('Something unexpected happen. Please try again later.');
         }
     }
 
@@ -108,16 +132,20 @@ class complaintFunctions extends commonFxn {
         if ($orderby) {
             $order = " order by id desc";
         }
-        $selectData = mysql_query("select * from $this->plrs_complaint_type $condition $order") or die(mysql_error());
-        if ($this->countTablerows($selectData) > 0) {
-            while ($rows = mysql_fetch_assoc($selectData)) {
-                $returnArr[] = $rows;
+        $selectData = mysql_query("select * from $this->plrs_complaint_type $condition $order");
+        if ($selectData) {
+            if ($this->countTablerows($selectData) > 0) {
+                while ($rows = mysql_fetch_assoc($selectData)) {
+                    $returnArr[] = $rows;
+                }
+                return $returnArr;
             }
-            return $returnArr;
+            else {
+                $this->setMessage('No Records Found.');
+            }
         }
-        else {
-            $this->setMessage('No Records Found.');
-        }
+        else
+            $this->setMessage('Something unexpected happen. Please try again later.');
     }
 
     public function getPLRSRemarks($id = '', $orderby = false) {
@@ -131,15 +159,20 @@ class complaintFunctions extends commonFxn {
         if ($orderby) {
             $order = " order by id desc";
         }
-        $selectData = mysql_query("select * from $this->plrs_user_comment $condition $order") or die(mysql_error());
-        if ($this->countTablerows($selectData) > 0) {
-            while ($rows = mysql_fetch_assoc($selectData)) {
-                $returnArr[] = $rows;
+        $selectData = mysql_query("select * from $this->plrs_user_comment $condition $order");
+        if ($selectData) {
+            if ($this->countTablerows($selectData) > 0) {
+                while ($rows = mysql_fetch_assoc($selectData)) {
+                    $returnArr[] = $rows;
+                }
+                return $returnArr;
             }
-            return $returnArr;
+            else {
+                $this->setMessage('No Records Found.');
+            }
         }
         else {
-            $this->setMessage('No Records Found.');
+            $this->setMessage('Something unexpected happen. Please try again later.');
         }
     }
 
@@ -363,7 +396,7 @@ class complaintFunctions extends commonFxn {
                 }
             }
             else {
-                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `city`, `district`, `tehsil`, `sub_tehsil`, `country`, `complaint_type`, `caller_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$city','$district','$tehsil','$subtehsil','$country_id','$complainttype','$caller','$ticket_no','$cdescription','$created_by','$add_date','0')") or die(mysql_error());
+                $insertQry = mysql_query("INSERT INTO `$this->plrs_complaint`(`name`, `email`, `contactno`, `address`, `city`, `district`, `tehsil`, `sub_tehsil`, `country`, `complaint_type`, `caller_type`, `ticket_no`, `complaint_remarks`, `created_by`, `add_date`, `status`) VALUES ('$cname','$cemail','$contactno','$caddress','$city','$district','$tehsil','$subtehsil','$country_id','$complainttype','$caller','$ticket_no','$cdescription','$created_by','$add_date','0')");
                 if ($insertQry) {
                     $emailFieldarry = array('cname' => $cname, 'cemail' => $cemail, 'ticket_no' => $ticket_no);
                     if ($is_sms !== '0' || $is_email !== '0') {
@@ -374,8 +407,13 @@ class complaintFunctions extends commonFxn {
                     if (is_a($emailFunc, 'emailFunctions')) {
                         $emailFunc->onComplaintRegistered($emailFieldarry);
                     }
-                    $this->setSessionMessage('Complaint added successfully with Complaint No.' . $ticket_no, 'success');
+                    $this->setSessionMessage('Complaint added successfully with Complaint No.' . $ticket_no . '. <a href="' . SITE_URL . '?page=editComplaints&idu=' . $last_insert_id . '">Click Here</a> to Close or Forward Complaint.', 'success', FALSE);
                     return true;
+                }
+                else {
+                    $errors['unexpected'] = 'Something unexpected happen. Please try again later.';
+                    $this->setErrors($errors);
+                    return false;
                 }
             }
         }
@@ -415,16 +453,20 @@ class complaintFunctions extends commonFxn {
         if (trim($id) != '') {
             $condition = " where complaint_id='$id'";
         }
-        $selectData = mysql_query("select * from $this->plrs_user_comment $condition") or die(mysql_error());
-        if ($this->countTablerows($selectData) > 0) {
-            while ($rows = mysql_fetch_assoc($selectData)) {
-                $returnArr[] = $rows;
+        $selectData = mysql_query("select * from $this->plrs_user_comment $condition");
+        if ($selectData) {
+            if ($this->countTablerows($selectData) > 0) {
+                while ($rows = mysql_fetch_assoc($selectData)) {
+                    $returnArr[] = $rows;
+                }
+                return $returnArr;
             }
-            return $returnArr;
+            else {
+                $this->setMessage('No Records Found.');
+            }
         }
-        else {
-            $this->setMessage('No Records Found.');
-        }
+        else
+            $this->setMessage('Something unexpected happen. Please try again later.');
     }
 
     public function commentUser($usergroup, $compid) {
@@ -433,9 +475,14 @@ class complaintFunctions extends commonFxn {
             if (trim($usergroup) != '' && trim($compid) != '') {
                 $condition = " where user_group='$usergroup' and `complaint_id` = '$compid'";
             }
-            $selectData = mysql_query("select user_group from $this->plrs_user_comment $condition") or die(mysql_error());
-            if ($this->countTablerows($selectData) > 0) {
-                return true;
+            $selectData = mysql_query("select user_group from $this->plrs_user_comment $condition");
+            if ($selectData) {
+                if ($this->countTablerows($selectData) > 0) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
             else {
                 return false;

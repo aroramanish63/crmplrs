@@ -1,58 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <tns:TData xmlns:tns="http://www.indsoft.indianoil.co.in/WS/RequestQ">
     <tns:HeaderData>
-        <tns:dist_kyc_no>550000000130144</tns:dist_kyc_no>
-        <tns:dist_kyc_date>08/02/2015</tns:dist_kyc_date>
-        <tns:new_req_type>KYCNSVDOMSL69</tns:new_req_type>
-        <tns:cons_category>1</tns:cons_category>
-        <tns:cons_priority>2</tns:cons_priority>
-        <tns:name_status>Mrs</tns:name_status>
-        <tns:first_name>MEERA</tns:first_name>
-        <tns:middle_name/>
-        <tns:last_name>DEVI</tns:last_name>
-        <tns:marital_status>4</tns:marital_status>
-        <tns:sex>F</tns:sex>
-        <tns:dob>01/01/1960</tns:dob>
-        <tns:father_name>.</tns:father_name>
-        <tns:mother_name>PARWATI DEVI</tns:mother_name>
-        <tns:spouse_name>BHIM MISHRA</tns:spouse_name>
-        <tns:house_no>54</tns:house_no>
-        <tns:house_name>01</tns:house_name>
-        <tns:complex_name>54</tns:complex_name>
-        <tns:street_name>JAGIR TOLA</tns:street_name>
-        <tns:landmark>MARAWA MIDDLE SCHOOL</tns:landmark>
-        <tns:city>MARWA</tns:city>
-        <tns:pin_code>853201</tns:pin_code>
-        <tns:tel_no/>
-        <tns:mobile>9473040775</tns:mobile>
-        <tns:email>chandanmishra.marwa@gmail.com</tns:email>
-        <tns:bank_name/>
-        <tns:bank_branch/>
-        <tns:bank_address/>
-        <tns:bank_ifsc/>
-        <tns:bank_account_no/>
-        <tns:date_submitted>08/02/2015</tns:date_submitted>
-        <tns:date_received>08/02/2015</tns:date_received>
-        <tns:dist_kyc_response>1</tns:dist_kyc_response>
-        <tns:dist_kyc_remarks>indane.co.in 1214754</tns:dist_kyc_remarks>
-        <tns:userid>1214754</tns:userid>
+        <tns:sap_code>123852</tns:sap_code>
+        <tns:bank_name>PURVANCHAL GRAMIN BANK</tns:bank_name>
+        <tns:bank_ifsc>607213</tns:bank_ifsc>
+        <tns:bank_account_no>75049946782</tns:bank_account_no>
+        <tns:email>trivenigas@gmail.com</tns:email>
+        <tns:mobile>9414800008</tns:mobile>
+        <tns:name_as_per_bank>PANKAJ GARG</tns:name_as_per_bank>
+        <tns:date_submitted>25/02/2015</tns:date_submitted>
+        <tns:userid>1867</tns:userid>
     </tns:HeaderData>
-    <tns:ItemData>
-        <tns:Data>
-            <tns:kyc_slno>1</tns:kyc_slno>
-            <tns:proof_code>3</tns:proof_code>
-            <tns:proof_details>22028MARJTBPL51</tns:proof_details>
-            <tns:adnl_info/>
-            <tns:proof_docdate>08/02/2015</tns:proof_docdate>
-            <tns:proof_verified>0</tns:proof_verified>
-        </tns:Data>
-        <tns:Data>
-            <tns:kyc_slno>2</tns:kyc_slno>
-            <tns:proof_code>19</tns:proof_code>
-            <tns:proof_details>BR31170273225</tns:proof_details>
-            <tns:adnl_info/>
-            <tns:proof_docdate>08/02/2015</tns:proof_docdate>
-            <tns:proof_verified>0</tns:proof_verified>
-        </tns:Data>
-    </tns:ItemData>
 </tns:TData>
